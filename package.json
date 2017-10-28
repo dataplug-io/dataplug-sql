@@ -26,7 +26,19 @@
   },
   "homepage": "https://github.com/dataplug-io/dataplug-sql#readme",
   "dependencies": {
-    "bluebird": "^3.5.1"
+    "bluebird": "^3.5.1",
+    "knex": "^0.13.0"
+  },
+  "optionalDependencies": {
+    "mariasql": "^0.2.6",
+    "mssql": "^4.1.0",
+    "mysql": "^2.15.0",
+    "mysql2": "^1.4.2",
+    "oracle": "^0.4.1",
+    "pg": "^7.3.0",
+    "pg-query-stream": "^1.1.1",
+    "sqlite3": "^3.1.13",
+    "strong-oracle": "^1.9.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
