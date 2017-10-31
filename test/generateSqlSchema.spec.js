@@ -73,7 +73,7 @@ describe('generateSqlSchema()', () => {
       .map(query => query.toString())
       .join('; ')
       .should.be.equal(
-        'create table "entity" ("booleanProperty" boolean not null, "enumProperty" text check ("enumProperty" in (\'option1\', \'option2\')) not null, "integerProperty" integer not null, "stringProperty" varchar(255) not null, "objectProperty" json not null)')
+        'create table "entity" ("booleanProperty" boolean not null, "enumProperty" text check ("enumProperty" in (\'option1\', \'option2\')) not null, "integerProperty" integer not null, "stringProperty" text not null, "objectProperty" json not null)')
   })
 
   it('generates SQL schema for entity with default-value fields', () => {
@@ -110,7 +110,8 @@ describe('generateSqlSchema()', () => {
     generateSqlSchema(pg, entities)
       .map(query => query.toString())
       .join('; ')
-      .should.be.equal('create table "entity" ("booleanProperty" boolean not null, "enumProperty" text check ("enumProperty" in (\'option1\', \'option2\')) not null default \'option1\', "integerProperty" integer not null, "stringProperty" varchar(255) not null default \'value\', "objectProperty" json not null {})')
+      .should.be.equal(
+        'create table "entity" ("booleanProperty" boolean not null, "enumProperty" text check ("enumProperty" in (\'option1\', \'option2\')) not null default \'option1\', "integerProperty" integer not null, "stringProperty" text not null default \'value\', "objectProperty" json not null {})')
   })
 
   it('generates SQL schema for entity with nullable fields', () => {
@@ -147,7 +148,8 @@ describe('generateSqlSchema()', () => {
     generateSqlSchema(pg, entities)
       .map(query => query.toString())
       .join('; ')
-      .should.be.equal('create table "entity" ("booleanProperty" boolean null, "enumProperty" text check ("enumProperty" in (\'option1\', \'option2\')) null, "integerProperty" integer null, "stringProperty" varchar(255) null, "objectProperty" json null)')
+      .should.be.equal(
+        'create table "entity" ("booleanProperty" boolean null, "enumProperty" text check ("enumProperty" in (\'option1\', \'option2\')) null, "integerProperty" integer null, "stringProperty" text null, "objectProperty" json null)')
   })
 
   it('generates SQL schema for entities (array)', () => {
@@ -202,11 +204,13 @@ describe('generateSqlSchema()', () => {
       .join('; ')
       .should.be.equal(
         'create table "collection" ("id" integer not null);\n' +
-        'alter table "collection" add constraint "collection_pkey" primary key ("id"); ' +
+        'alter table "collection" add constraint "collection_pkey" primary key ("id");\n' +
+        'alter table "collection" add constraint "collection_id_unique" unique ("id"); ' +
         'create table "collection/array[@]" ("$foreign$id$collection" integer not null, "$value" integer not null);\n' +
         'create index "collection/array[@]_$foreign$id$collection_index" on "collection/array[@]" ("$foreign$id$collection");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_$foreign$id$collection_foreign" foreign key ("$foreign$id$collection") references "collection" ("id");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_pkey" primary key ("$foreign$id$collection", "$value")')
+        'alter table "collection/array[@]" add constraint "collection/array[@]_pkey" primary key ("$foreign$id$collection", "$value");\n' +
+        'alter table "collection/array[@]" add constraint "collection/array[@]_$foreign$id$collection_$value_unique" unique ("$foreign$id$collection", "$value");\n' +
+        'alter table "collection/array[@]" add constraint "collection/array[@]_$foreign$id$collection_foreign" foreign key ("$foreign$id$collection") references "collection" ("id") on update RESTRICT on delete RESTRICT')
   })
 
   it('generates SQL schema for entities (complex array)', () => {
@@ -249,11 +253,13 @@ describe('generateSqlSchema()', () => {
       .join('; ')
       .should.be.equal(
         'create table "collection" ("id" integer not null);\n' +
-        'alter table "collection" add constraint "collection_pkey" primary key ("id"); ' +
-        'create table "collection/array[@]" ("$foreign$id$collection" integer not null, "value" varchar(255) not null);\n' +
+        'alter table "collection" add constraint "collection_pkey" primary key ("id");\n' +
+        'alter table "collection" add constraint "collection_id_unique" unique ("id"); ' +
+        'create table "collection/array[@]" ("$foreign$id$collection" integer not null, "value" text not null);\n' +
         'create index "collection/array[@]_$foreign$id$collection_index" on "collection/array[@]" ("$foreign$id$collection");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_$foreign$id$collection_foreign" foreign key ("$foreign$id$collection") references "collection" ("id");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_pkey" primary key ("$foreign$id$collection")')
+        'alter table "collection/array[@]" add constraint "collection/array[@]_pkey" primary key ("$foreign$id$collection");\n' +
+        'alter table "collection/array[@]" add constraint "collection/array[@]_$foreign$id$collection_unique" unique ("$foreign$id$collection");\n' +
+        'alter table "collection/array[@]" add constraint "collection/array[@]_$foreign$id$collection_foreign" foreign key ("$foreign$id$collection") references "collection" ("id") on update RESTRICT on delete RESTRICT')
   })
 
   it('generates SQL schema for entities (complex)', () => {
@@ -296,10 +302,12 @@ describe('generateSqlSchema()', () => {
       .join('; ')
       .should.be.equal(
         'create table "collection" ("simpleProperty" integer not null);\n' +
-        'alter table "collection" add constraint "collection_pkey" primary key ("simpleProperty"); ' +
+        'alter table "collection" add constraint "collection_pkey" primary key ("simpleProperty");\n' +
+        'alter table "collection" add constraint "collection_simpleproperty_unique" unique ("simpleProperty"); ' +
         'create table "collection/complexObject" ("$foreign$simpleProperty$collection" integer not null, "otherSimpleProperty" integer not null);\n' +
         'create index "collection/complexobject_$foreign$simpleproperty$collection_index" on "collection/complexObject" ("$foreign$simpleProperty$collection");\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexobject_$foreign$simpleproperty$collection_foreign" foreign key ("$foreign$simpleProperty$collection") references "collection" ("simpleProperty");\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_pkey" primary key ("$foreign$simpleProperty$collection")')
+        'alter table "collection/complexObject" add constraint "collection/complexObject_pkey" primary key ("$foreign$simpleProperty$collection");\n' +
+        'alter table "collection/complexObject" add constraint "collection/complexobject_$foreign$simpleproperty$collection_unique" unique ("$foreign$simpleProperty$collection");\n' +
+        'alter table "collection/complexObject" add constraint "collection/complexobject_$foreign$simpleproperty$collection_foreign" foreign key ("$foreign$simpleProperty$collection") references "collection" ("simpleProperty") on update RESTRICT on delete RESTRICT')
   })
 })
