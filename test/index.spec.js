@@ -4,6 +4,12 @@ require('chai')
 const dataplugSql = require('../lib')
 
 describe('dataplug-sql', () => {
+  it('has "generateSqlSchema" function', () => {
+    dataplugSql
+      .should.have.property('generateSqlSchema')
+      .that.is.an('function')
+  })
+
   it('has "serializeContainerToSql" function', () => {
     dataplugSql
       .should.have.property('serializeContainerToSql')
