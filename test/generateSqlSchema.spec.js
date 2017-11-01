@@ -207,10 +207,9 @@ describe('generateSqlSchema()', () => {
         'alter table "collection" add constraint "collection_primary" primary key ("id");\n' +
         'alter table "collection" add constraint "collection_unique" unique ("id"); ' +
         'create table "collection/array[@]" ("$collection~id" integer not null, "$value" integer not null);\n' +
-        'create index "collection/array[@]_$collection~id_index" on "collection/array[@]" ("$collection~id");\n' +
         'alter table "collection/array[@]" add constraint "collection/array[@]_primary" primary key ("$collection~id", "$value");\n' +
         'alter table "collection/array[@]" add constraint "collection/array[@]_unique" unique ("$collection~id", "$value");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_foreign_collection" foreign key ("$collection~id") references "collection" ("id") on update RESTRICT on delete RESTRICT')
+        'alter table "collection/array[@]" add constraint "collection/array[@]_collection" foreign key ("$collection~id") references "collection" ("id") on update RESTRICT on delete RESTRICT')
   })
 
   it('generates SQL schema for entities (complex array)', () => {
@@ -256,10 +255,9 @@ describe('generateSqlSchema()', () => {
         'alter table "collection" add constraint "collection_primary" primary key ("id");\n' +
         'alter table "collection" add constraint "collection_unique" unique ("id"); ' +
         'create table "collection/array[@]" ("$collection~id" integer not null, "value" text not null);\n' +
-        'create index "collection/array[@]_$collection~id_index" on "collection/array[@]" ("$collection~id");\n' +
         'alter table "collection/array[@]" add constraint "collection/array[@]_primary" primary key ("$collection~id");\n' +
         'alter table "collection/array[@]" add constraint "collection/array[@]_unique" unique ("$collection~id");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_foreign_collection" foreign key ("$collection~id") references "collection" ("id") on update RESTRICT on delete RESTRICT')
+        'alter table "collection/array[@]" add constraint "collection/array[@]_collection" foreign key ("$collection~id") references "collection" ("id") on update RESTRICT on delete RESTRICT')
   })
 
   it('generates SQL schema for entities (complex)', () => {
@@ -305,9 +303,8 @@ describe('generateSqlSchema()', () => {
         'alter table "collection" add constraint "collection_primary" primary key ("simpleProperty");\n' +
         'alter table "collection" add constraint "collection_unique" unique ("simpleProperty"); ' +
         'create table "collection/complexObject" ("$collection~simpleProperty" integer not null, "otherSimpleProperty" integer not null);\n' +
-        'create index "collection/complexobject_$collection~simpleproperty_index" on "collection/complexObject" ("$collection~simpleProperty");\n' +
         'alter table "collection/complexObject" add constraint "collection/complexObject_primary" primary key ("$collection~simpleProperty");\n' +
         'alter table "collection/complexObject" add constraint "collection/complexObject_unique" unique ("$collection~simpleProperty");\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_foreign_collection" foreign key ("$collection~simpleProperty") references "collection" ("simpleProperty") on update RESTRICT on delete RESTRICT')
+        'alter table "collection/complexObject" add constraint "collection/complexObject_collection" foreign key ("$collection~simpleProperty") references "collection" ("simpleProperty") on update RESTRICT on delete RESTRICT')
   })
 })
