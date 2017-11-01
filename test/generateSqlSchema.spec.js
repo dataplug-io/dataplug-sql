@@ -175,6 +175,10 @@ describe('generateSqlSchema()', () => {
               entity: 'collection',
               field: 'id'
             },
+            relation: {
+              entity: 'collection',
+              field: 'id'
+            },
             type: 'integer'
           },
           $value: {
@@ -235,6 +239,10 @@ describe('generateSqlSchema()', () => {
               'entity': 'collection',
               'field': 'id'
             },
+            relation: {
+              entity: 'collection',
+              field: 'id'
+            },
             'type': 'integer'
           },
           'value': {
@@ -283,6 +291,10 @@ describe('generateSqlSchema()', () => {
               entity: 'collection',
               field: 'simpleProperty',
               depth: 1
+            },
+            relation: {
+              entity: 'collection',
+              field: 'simpleProperty'
             }
           },
           otherSimpleProperty: {
@@ -306,5 +318,97 @@ describe('generateSqlSchema()', () => {
         'alter table "collection/complexObject" add constraint "collection/complexObject_primary" primary key ("$collection~simpleProperty");\n' +
         'alter table "collection/complexObject" add constraint "collection/complexObject_unique" unique ("$collection~simpleProperty");\n' +
         'alter table "collection/complexObject" add constraint "collection/complexObject_collection" foreign key ("$collection~simpleProperty") references "collection" ("simpleProperty") on update RESTRICT on delete RESTRICT')
+  })
+
+  it('generates SQL schema for entities (complex with additionalProperties)', () => {
+    const entities = {
+      collection: {
+        fields: {
+          simpleProperty: {
+            identity: true,
+            type: 'integer'
+          }
+        },
+        origin: '#',
+        relatedEntities: [
+          'collection/complexObject'
+        ]
+      },
+      'collection/complexObject': {
+        fields: {
+          '$collection~simpleProperty': {
+            identity: true,
+            reference: {
+              depth: 1,
+              entity: 'collection',
+              field: 'simpleProperty'
+            },
+            relation: {
+              entity: 'collection',
+              field: 'simpleProperty'
+            },
+            type: 'integer'
+          }
+        },
+        origin: '#/properties/complexObject',
+        relatedEntities: [
+          'collection/complexObject[@0]'
+        ]
+      },
+      'collection/complexObject[@0]': {
+        customSchema: {
+          properties: {
+            $property: {
+              type: 'string'
+            },
+            $value: {
+              type: ['object', 'null']
+            }
+          },
+          required: ['$property', '$value'],
+          type: 'object'
+        },
+        fields: {
+          '$collection~simpleProperty': {
+            identity: true,
+            reference: {
+              depth: 2,
+              entity: 'collection',
+              field: 'simpleProperty'
+            },
+            relation: {
+              entity: 'collection/complexObject',
+              field: '$collection~simpleProperty'
+            },
+            type: 'integer'
+          },
+          $property: {
+            identity: true,
+            type: 'string'
+          },
+          $value: {
+            identity: true,
+            nullable: true,
+            type: 'json'
+          }
+        },
+        origin: '#/properties/complexObject/additionalProperties'
+      }
+    }
+    generateSqlSchema(pg, entities)
+      .map(query => query.toString())
+      .join('; ')
+      .should.be.equal(
+        'create table "collection" ("simpleProperty" integer not null);\n' +
+        'alter table "collection" add constraint "collection_primary" primary key ("simpleProperty");\n' +
+        'alter table "collection" add constraint "collection_unique" unique ("simpleProperty"); ' +
+        'create table "collection/complexObject" ("$collection~simpleProperty" integer not null);\n' +
+        'alter table "collection/complexObject" add constraint "collection/complexObject_primary" primary key ("$collection~simpleProperty");\n' +
+        'alter table "collection/complexObject" add constraint "collection/complexObject_unique" unique ("$collection~simpleProperty");\n' +
+        'alter table "collection/complexObject" add constraint "collection/complexObject_collection" foreign key ("$collection~simpleProperty") references "collection" ("simpleProperty") on update RESTRICT on delete RESTRICT; ' +
+        'create table "collection/complexObject[@0]" ("$collection~simpleProperty" integer not null, "$property" text not null, "$value" json null);\n' +
+        'alter table "collection/complexObject[@0]" add constraint "collection/complexObject[@0]_primary" primary key ("$collection~simpleProperty", "$property", "$value");\n' +
+        'alter table "collection/complexObject[@0]" add constraint "collection/complexObject[@0]_unique" unique ("$collection~simpleProperty", "$property", "$value");\n' +
+        'alter table "collection/complexObject[@0]" add constraint "collection/complexObject[@0]_collection/complexObject" foreign key ("$collection~simpleProperty") references "collection/complexObject" ("$collection~simpleProperty") on update RESTRICT on delete RESTRICT')
   })
 })
