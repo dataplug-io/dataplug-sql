@@ -209,7 +209,7 @@ describe('generateSqlSchema()', () => {
         'create table "collection/array[@]" ("$collection~id" integer not null, "$value" integer not null);\n' +
         'alter table "collection/array[@]" add constraint "collection/array[@]_primary" primary key ("$collection~id");\n' +
         'alter table "collection/array[@]" add constraint "collection/array[@]_unique" unique ("$collection~id");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_owner" foreign key ("$collection~id") references "collection" ("id") on update RESTRICT on delete RESTRICT')
+        'alter table "collection/array[@]" add constraint "collection/array[@]_owner" foreign key ("$collection~id") references "collection" ("id") on update CASCADE on delete CASCADE')
   })
 
   it('generates SQL schema for entities (complex array)', () => {
@@ -261,7 +261,7 @@ describe('generateSqlSchema()', () => {
         'create table "collection/array[@]" ("$collection~id" integer not null, "value" text not null);\n' +
         'alter table "collection/array[@]" add constraint "collection/array[@]_primary" primary key ("$collection~id");\n' +
         'alter table "collection/array[@]" add constraint "collection/array[@]_unique" unique ("$collection~id");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_owner" foreign key ("$collection~id") references "collection" ("id") on update RESTRICT on delete RESTRICT')
+        'alter table "collection/array[@]" add constraint "collection/array[@]_owner" foreign key ("$collection~id") references "collection" ("id") on update CASCADE on delete CASCADE')
   })
 
   it('generates SQL schema for entities (complex)', () => {
@@ -313,7 +313,7 @@ describe('generateSqlSchema()', () => {
         'create table "collection/complexObject" ("$collection~simpleProperty" integer not null, "otherSimpleProperty" integer not null);\n' +
         'alter table "collection/complexObject" add constraint "collection/complexObject_primary" primary key ("$collection~simpleProperty");\n' +
         'alter table "collection/complexObject" add constraint "collection/complexObject_unique" unique ("$collection~simpleProperty");\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_owner" foreign key ("$collection~simpleProperty") references "collection" ("simpleProperty") on update RESTRICT on delete RESTRICT')
+        'alter table "collection/complexObject" add constraint "collection/complexObject_owner" foreign key ("$collection~simpleProperty") references "collection" ("simpleProperty") on update CASCADE on delete CASCADE')
   })
 
   it('generates SQL schema for entities (complex with additionalProperties)', () => {
@@ -400,10 +400,10 @@ describe('generateSqlSchema()', () => {
         'create table "collection/complexObject" ("$collection~simpleProperty" integer not null);\n' +
         'alter table "collection/complexObject" add constraint "collection/complexObject_primary" primary key ("$collection~simpleProperty");\n' +
         'alter table "collection/complexObject" add constraint "collection/complexObject_unique" unique ("$collection~simpleProperty");\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_owner" foreign key ("$collection~simpleProperty") references "collection" ("simpleProperty") on update RESTRICT on delete RESTRICT; ' +
+        'alter table "collection/complexObject" add constraint "collection/complexObject_owner" foreign key ("$collection~simpleProperty") references "collection" ("simpleProperty") on update CASCADE on delete CASCADE; ' +
         'create table "collection/complexObject[@0]" ("$collection~simpleProperty" integer not null, "$property" text not null, "$value" json null);\n' +
         'alter table "collection/complexObject[@0]" add constraint "collection/complexObject[@0]_primary" primary key ("$collection~simpleProperty", "$property");\n' +
         'alter table "collection/complexObject[@0]" add constraint "collection/complexObject[@0]_unique" unique ("$collection~simpleProperty", "$property");\n' +
-        'alter table "collection/complexObject[@0]" add constraint "collection/complexObject[@0]_owner" foreign key ("$collection~simpleProperty") references "collection/complexObject" ("$collection~simpleProperty") on update RESTRICT on delete RESTRICT')
+        'alter table "collection/complexObject[@0]" add constraint "collection/complexObject[@0]_owner" foreign key ("$collection~simpleProperty") references "collection/complexObject" ("$collection~simpleProperty") on update CASCADE on delete CASCADE')
   })
 })
