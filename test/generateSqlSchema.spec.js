@@ -168,7 +168,7 @@ describe('generateSqlSchema()', () => {
       },
       'collection/array[@]': {
         fields: {
-          $foreign$id$collection: {
+          '$collection~id': {
             identity: true,
             reference: {
               depth: 1,
@@ -183,7 +183,7 @@ describe('generateSqlSchema()', () => {
           }
         },
         foreignFields: [
-          '$foreign$id$collection'
+          '$collection~id'
         ],
         origin: '#/properties/array/items',
         customSchema: {
@@ -206,11 +206,11 @@ describe('generateSqlSchema()', () => {
         'create table "collection" ("id" integer not null);\n' +
         'alter table "collection" add constraint "collection_primary" primary key ("id");\n' +
         'alter table "collection" add constraint "collection_unique" unique ("id"); ' +
-        'create table "collection/array[@]" ("$foreign$id$collection" integer not null, "$value" integer not null);\n' +
-        'create index "collection/array[@]_$foreign$id$collection_index" on "collection/array[@]" ("$foreign$id$collection");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_primary" primary key ("$foreign$id$collection", "$value");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_unique" unique ("$foreign$id$collection", "$value");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_foreign_collection" foreign key ("$foreign$id$collection") references "collection" ("id") on update RESTRICT on delete RESTRICT')
+        'create table "collection/array[@]" ("$collection~id" integer not null, "$value" integer not null);\n' +
+        'create index "collection/array[@]_$collection~id_index" on "collection/array[@]" ("$collection~id");\n' +
+        'alter table "collection/array[@]" add constraint "collection/array[@]_primary" primary key ("$collection~id", "$value");\n' +
+        'alter table "collection/array[@]" add constraint "collection/array[@]_unique" unique ("$collection~id", "$value");\n' +
+        'alter table "collection/array[@]" add constraint "collection/array[@]_foreign_collection" foreign key ("$collection~id") references "collection" ("id") on update RESTRICT on delete RESTRICT')
   })
 
   it('generates SQL schema for entities (complex array)', () => {
@@ -229,7 +229,7 @@ describe('generateSqlSchema()', () => {
       },
       'collection/array[@]': {
         'fields': {
-          '$foreign$id$collection': {
+          '$collection~id': {
             'identity': true,
             'reference': {
               'depth': 1,
@@ -243,7 +243,7 @@ describe('generateSqlSchema()', () => {
           }
         },
         'foreignFields': [
-          '$foreign$id$collection'
+          '$collection~id'
         ],
         'origin': '#/properties/array/items'
       }
@@ -255,11 +255,11 @@ describe('generateSqlSchema()', () => {
         'create table "collection" ("id" integer not null);\n' +
         'alter table "collection" add constraint "collection_primary" primary key ("id");\n' +
         'alter table "collection" add constraint "collection_unique" unique ("id"); ' +
-        'create table "collection/array[@]" ("$foreign$id$collection" integer not null, "value" text not null);\n' +
-        'create index "collection/array[@]_$foreign$id$collection_index" on "collection/array[@]" ("$foreign$id$collection");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_primary" primary key ("$foreign$id$collection");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_unique" unique ("$foreign$id$collection");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_foreign_collection" foreign key ("$foreign$id$collection") references "collection" ("id") on update RESTRICT on delete RESTRICT')
+        'create table "collection/array[@]" ("$collection~id" integer not null, "value" text not null);\n' +
+        'create index "collection/array[@]_$collection~id_index" on "collection/array[@]" ("$collection~id");\n' +
+        'alter table "collection/array[@]" add constraint "collection/array[@]_primary" primary key ("$collection~id");\n' +
+        'alter table "collection/array[@]" add constraint "collection/array[@]_unique" unique ("$collection~id");\n' +
+        'alter table "collection/array[@]" add constraint "collection/array[@]_foreign_collection" foreign key ("$collection~id") references "collection" ("id") on update RESTRICT on delete RESTRICT')
   })
 
   it('generates SQL schema for entities (complex)', () => {
@@ -278,7 +278,7 @@ describe('generateSqlSchema()', () => {
       },
       'collection/complexObject': {
         fields: {
-          '$foreign$simpleProperty$collection': {
+          '$collection~simpleProperty': {
             identity: true,
             type: 'integer',
             reference: {
@@ -293,7 +293,7 @@ describe('generateSqlSchema()', () => {
         },
         origin: '#/properties/complexObject',
         foreignFields: [
-          '$foreign$simpleProperty$collection'
+          '$collection~simpleProperty'
         ]
       }
     }
@@ -304,10 +304,10 @@ describe('generateSqlSchema()', () => {
         'create table "collection" ("simpleProperty" integer not null);\n' +
         'alter table "collection" add constraint "collection_primary" primary key ("simpleProperty");\n' +
         'alter table "collection" add constraint "collection_unique" unique ("simpleProperty"); ' +
-        'create table "collection/complexObject" ("$foreign$simpleProperty$collection" integer not null, "otherSimpleProperty" integer not null);\n' +
-        'create index "collection/complexobject_$foreign$simpleproperty$collection_index" on "collection/complexObject" ("$foreign$simpleProperty$collection");\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_primary" primary key ("$foreign$simpleProperty$collection");\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_unique" unique ("$foreign$simpleProperty$collection");\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_foreign_collection" foreign key ("$foreign$simpleProperty$collection") references "collection" ("simpleProperty") on update RESTRICT on delete RESTRICT')
+        'create table "collection/complexObject" ("$collection~simpleProperty" integer not null, "otherSimpleProperty" integer not null);\n' +
+        'create index "collection/complexobject_$collection~simpleproperty_index" on "collection/complexObject" ("$collection~simpleProperty");\n' +
+        'alter table "collection/complexObject" add constraint "collection/complexObject_primary" primary key ("$collection~simpleProperty");\n' +
+        'alter table "collection/complexObject" add constraint "collection/complexObject_unique" unique ("$collection~simpleProperty");\n' +
+        'alter table "collection/complexObject" add constraint "collection/complexObject_foreign_collection" foreign key ("$collection~simpleProperty") references "collection" ("simpleProperty") on update RESTRICT on delete RESTRICT')
   })
 })
