@@ -14,7 +14,7 @@ describe('SqlStreamWriter', () => {
         .on('error', reject)
         .on('data', (chunk) => { data += chunk })
     })
-      .should.eventually.be.equal('insert into "collection" ("property") values (\'value\');')
+      .should.eventually.be.equal('insert into "collection:entity" ("property") values (\'value\');')
       .and.notify(done)
 
     writer.write({
