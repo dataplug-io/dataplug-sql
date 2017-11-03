@@ -10,15 +10,27 @@ describe('dataplug-sql', () => {
       .that.is.an('function')
   })
 
-  it('has "serializeContainerToSql" function', () => {
+  it('has "resolveConnectedDbClient" function', () => {
     dataplugSql
-      .should.have.property('serializeContainerToSql')
+      .should.have.property('resolveConnectedDbClient')
+      .that.is.an('function')
+  })
+
+  it('has "resolveDbClient" function', () => {
+    dataplugSql
+      .should.have.property('resolveDbClient')
       .that.is.an('function')
   })
 
   it('has "serializeObjectToSql" function', () => {
     dataplugSql
       .should.have.property('serializeObjectToSql')
+      .that.is.an('function')
+  })
+
+  it('has "serializeDataToSql" function', () => {
+    dataplugSql
+      .should.have.property('serializeDataToSql')
       .that.is.an('function')
   })
 
