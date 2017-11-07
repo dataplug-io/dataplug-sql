@@ -27,7 +27,7 @@
   "homepage": "https://github.com/dataplug-io/dataplug-sql#readme",
   "dependencies": {
     "bluebird": "^3.5.1",
-    "knex": "^0.13.0"
+    "knex": "^0.14.0"
   },
   "optionalDependencies": {
     "pg": "^7.3.0",
