@@ -13,9 +13,11 @@ describe('serializeObjectToSql()', () => {
       property: 'value'
     }
     const metadata = {
-      property: {
-        type: 'string',
-        identity: true
+      fields: {
+        property: {
+          type: 'string',
+          identity: true
+        }
       }
     }
     serializeObjectToSql(object, metadata, pg, 'collection')
@@ -30,12 +32,14 @@ describe('serializeObjectToSql()', () => {
       value: 'value'
     }
     const metadata = {
-      property: {
-        type: 'string',
-        identity: true
-      },
-      value: {
-        type: 'string'
+      fields: {
+        property: {
+          type: 'string',
+          identity: true
+        },
+        value: {
+          type: 'string'
+        }
       }
     }
     serializeObjectToSql(object, metadata, pg, 'collection', false, true)
@@ -49,9 +53,11 @@ describe('serializeObjectToSql()', () => {
       property: 'value'
     }
     const metadata = {
-      property: {
-        type: 'string',
-        identity: true
+      fields: {
+        property: {
+          type: 'string',
+          identity: true
+        }
       }
     }
     serializeObjectToSql(object, metadata, pg, 'collection', false, false)
