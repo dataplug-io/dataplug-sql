@@ -22,21 +22,15 @@ describe('dataplug-sql', () => {
       .that.is.an('function')
   })
 
-  it('has "serializeObjectToSql" function', () => {
-    dataplugSql
-      .should.have.property('serializeObjectToSql')
-      .that.is.an('function')
-  })
-
-  it('has "serializeDataToSql" function', () => {
-    dataplugSql
-      .should.have.property('serializeDataToSql')
-      .that.is.an('function')
-  })
-
   it('has "SqlStreamWriter" class', () => {
     dataplugSql
       .should.have.property('SqlStreamWriter')
+      .that.is.an('function')
+  })
+
+  it('has "SqlSerializer" class', () => {
+    dataplugSql
+      .should.have.property('SqlSerializer')
       .that.is.an('function')
   })
 

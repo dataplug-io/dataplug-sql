@@ -6,7 +6,7 @@ const { SqlStreamWriter } = require('../lib')
 
 describe('SqlStreamWriter', () => {
   it('emits SQL using metadata from data to output stream', (done) => {
-    const writer = new SqlStreamWriter('postgres', 'collection')
+    const writer = new SqlStreamWriter('postgres', 'collection:')
     new Promise((resolve, reject) => {
       let data = ''
       writer
@@ -34,7 +34,7 @@ describe('SqlStreamWriter', () => {
   })
 
   it('rejects without metadata', (done) => {
-    const writer = new SqlStreamWriter('postgres', 'collection')
+    const writer = new SqlStreamWriter('postgres', 'collection:')
     new Promise((resolve, reject) => {
       let data = ''
       writer
