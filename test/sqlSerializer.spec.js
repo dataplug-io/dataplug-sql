@@ -2,10 +2,7 @@
 require('chai')
   .use(require('chai-as-promised'))
   .should()
-const knex = require('knex')
 const { SqlSerializer } = require('../lib')
-
-const pg = knex({ client: 'postgres' })
 
 describe('SqlSerializer', () => {
   describe('#serializeObject()', () => {
@@ -21,7 +18,7 @@ describe('SqlSerializer', () => {
           }
         }
       }
-      new SqlSerializer(pg).serializeObject(object, 'collection', metadata)
+      new SqlSerializer('pg').serializeObject(object, 'collection', metadata)
         .map(query => query.toString())
         .join('; ')
         .should.be.equal('insert into "collection" ("property") values (\'value\')')
@@ -43,10 +40,10 @@ describe('SqlSerializer', () => {
           }
         }
       }
-      new SqlSerializer(pg, { updateBehavior: true }).serializeObject(object, 'collection', metadata)
+      new SqlSerializer('pg', { postprocessor: 'update-on-conflict' }).serializeObject(object, 'collection', metadata)
         .map(query => query.toString())
         .join('; ')
-        .should.be.equal('insert into "collection" ("property", "value") values (\'key\', \'value\') ON CONFLICT DO UPDATE SET "collection"."value" = excluded."value"')
+        .should.be.equal('insert into "collection" ("property", "value") values (\'key\', \'value\') ON CONFLICT DO UPDATE SET "value" = excluded."value"')
     })
 
     it('serializes simple object properly (do not upsert)', () => {
@@ -61,7 +58,7 @@ describe('SqlSerializer', () => {
           }
         }
       }
-      new SqlSerializer(pg, { updateBehavior: false }).serializeObject(object, 'collection', metadata)
+      new SqlSerializer('pg', { postprocessor: 'skip-on-conflict' }).serializeObject(object, 'collection', metadata)
         .map(query => query.toString())
         .join('; ')
         .should.be.equal('insert into "collection" ("property") values (\'value\') ON CONFLICT DO NOTHING')

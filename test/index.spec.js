@@ -10,21 +10,15 @@ describe('dataplug-sql', () => {
       .that.is.an('function')
   })
 
-  it('has "resolveConnectedDbClient" function', () => {
+  it('has "SqlCommandsWriter" class', () => {
     dataplugSql
-      .should.have.property('resolveConnectedDbClient')
+      .should.have.property('SqlCommandsWriter')
       .that.is.an('function')
   })
 
-  it('has "resolveDbClient" function', () => {
+  it('has "SqlSerializerStream" class', () => {
     dataplugSql
-      .should.have.property('resolveDbClient')
-      .that.is.an('function')
-  })
-
-  it('has "SqlStreamWriter" class', () => {
-    dataplugSql
-      .should.have.property('SqlStreamWriter')
+      .should.have.property('SqlSerializerStream')
       .that.is.an('function')
   })
 
@@ -34,9 +28,9 @@ describe('dataplug-sql', () => {
       .that.is.an('function')
   })
 
-  it('has "SqlDataWriter" class', () => {
+  it('has "SqlStreamWriter" class', () => {
     dataplugSql
-      .should.have.property('SqlDataWriter')
+      .should.have.property('SqlStreamWriter')
       .that.is.an('function')
   })
 })

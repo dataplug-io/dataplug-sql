@@ -2,15 +2,12 @@
 require('chai')
   .use(require('chai-as-promised'))
   .should()
-const knex = require('knex')
 const { generateSqlSchema } = require('../lib')
-
-const pg = knex({ client: 'postgres' })
 
 describe('generateSqlSchema()', () => {
   it('generates empty SQL schema', () => {
     const entities = {}
-    generateSqlSchema(pg, entities)
+    generateSqlSchema('pg', entities)
       .map(query => query.toString())
       .join('; ')
       .should.be.equal('')
@@ -22,7 +19,7 @@ describe('generateSqlSchema()', () => {
 
       }
     }
-    generateSqlSchema(pg, entities)
+    generateSqlSchema('pg', entities)
       .map(query => query.toString())
       .join('; ')
       .should.be.equal('create table "entity" ()')
@@ -35,7 +32,7 @@ describe('generateSqlSchema()', () => {
       entityB: {
       }
     }
-    generateSqlSchema(pg, entities)
+    generateSqlSchema('pg', entities)
       .map(query => query.toString())
       .join('; ')
       .should.be.equal(
@@ -69,7 +66,7 @@ describe('generateSqlSchema()', () => {
         }
       }
     }
-    generateSqlSchema(pg, entities)
+    generateSqlSchema('pg', entities)
       .map(query => query.toString())
       .join('; ')
       .should.be.equal(
@@ -107,7 +104,7 @@ describe('generateSqlSchema()', () => {
         }
       }
     }
-    generateSqlSchema(pg, entities)
+    generateSqlSchema('pg', entities)
       .map(query => query.toString())
       .join('; ')
       .should.be.equal(
@@ -145,7 +142,7 @@ describe('generateSqlSchema()', () => {
         }
       }
     }
-    generateSqlSchema(pg, entities)
+    generateSqlSchema('pg', entities)
       .map(query => query.toString())
       .join('; ')
       .should.be.equal(
@@ -199,7 +196,7 @@ describe('generateSqlSchema()', () => {
         }
       }
     }
-    generateSqlSchema(pg, entities)
+    generateSqlSchema('pg', entities)
       .map(query => query.toString())
       .join('; ')
       .should.be.equal(
@@ -251,7 +248,7 @@ describe('generateSqlSchema()', () => {
         'origin': '#/properties/array/items'
       }
     }
-    generateSqlSchema(pg, entities)
+    generateSqlSchema('pg', entities)
       .map(query => query.toString())
       .join('; ')
       .should.be.equal(
@@ -303,7 +300,7 @@ describe('generateSqlSchema()', () => {
         ]
       }
     }
-    generateSqlSchema(pg, entities)
+    generateSqlSchema('pg', entities)
       .map(query => query.toString())
       .join('; ')
       .should.be.equal(
@@ -390,7 +387,7 @@ describe('generateSqlSchema()', () => {
         origin: '#/properties/complexObject/additionalProperties'
       }
     }
-    generateSqlSchema(pg, entities)
+    generateSqlSchema('pg', entities)
       .map(query => query.toString())
       .join('; ')
       .should.be.equal(
