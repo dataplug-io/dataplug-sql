@@ -43,7 +43,7 @@ describe('SqlSerializer', () => {
       new SqlSerializer('pg', { postprocessor: 'update-on-conflict' }).serializeObject(object, 'collection', metadata)
         .map(query => query.toString())
         .join('; ')
-        .should.be.equal('insert into "collection" ("property", "value") values (\'key\', \'value\') ON CONFLICT DO UPDATE SET "value" = excluded."value"')
+        .should.be.equal('insert into "collection" ("property", "value") values (\'key\', \'value\') ON CONFLICT ("property") DO UPDATE SET "value" = excluded."value"')
     })
 
     it('serializes simple object properly (do not upsert)', () => {
