@@ -108,7 +108,7 @@ describe('generateSqlSchema()', () => {
       .map(query => query.toString())
       .join('; ')
       .should.be.equal(
-        'create table "entity" ("booleanProperty" boolean not null, "enumProperty" text check ("enumProperty" in (\'option1\', \'option2\')) not null default \'option1\', "integerProperty" integer not null, "stringProperty" text not null default \'value\', "objectProperty" json not null {})')
+        'create table "entity" ("booleanProperty" boolean not null default \'0\', "enumProperty" text check ("enumProperty" in (\'option1\', \'option2\')) not null default \'option1\', "integerProperty" integer not null default \'0\', "stringProperty" text not null default \'value\', "objectProperty" json not null {})')
   })
 
   it('generates SQL schema for entity with nullable fields', () => {
