@@ -2,7 +2,10 @@
 require('chai')
   .use(require('chai-as-promised'))
   .should()
+const logger = require('winston')
 const { generateSqlSchema } = require('../lib')
+
+logger.clear()
 
 describe('generateSqlSchema()', () => {
   it('generates empty SQL schema', () => {
@@ -21,8 +24,8 @@ describe('generateSqlSchema()', () => {
     }
     generateSqlSchema('pg', entities)
       .map(query => query.toString())
-      .join('; ')
-      .should.be.equal('create table "entity" ()')
+      .join(';\n')
+      .should.be.equal('CREATE TABLE entity ()')
   })
 
   it('generates SQL schema for two empty entity', () => {
@@ -34,10 +37,10 @@ describe('generateSqlSchema()', () => {
     }
     generateSqlSchema('pg', entities)
       .map(query => query.toString())
-      .join('; ')
+      .join(';\n')
       .should.be.equal(
-        'create table "entityA" (); ' +
-        'create table "entityB" ()')
+        'CREATE TABLE entityA ();\n' +
+        'CREATE TABLE entityB ()')
   })
 
   it('generates SQL schema for entity with fields', () => {
@@ -68,9 +71,15 @@ describe('generateSqlSchema()', () => {
     }
     generateSqlSchema('pg', entities)
       .map(query => query.toString())
-      .join('; ')
+      .join(';\n')
       .should.be.equal(
-        'create table "entity" ("booleanProperty" boolean not null, "enumProperty" text check ("enumProperty" in (\'option1\', \'option2\')) not null, "integerProperty" integer not null, "stringProperty" text not null, "objectProperty" json not null)')
+        'CREATE TABLE entity (' +
+          '\n\tbooleanProperty BOOLEAN NOT NULL,' +
+          '\n\tenumProperty TEXT CHECK (enumProperty IN (\'option1\', \'option2\')) NOT NULL,' +
+          '\n\tintegerProperty BIGINT NOT NULL,' +
+          '\n\tstringProperty TEXT NOT NULL,' +
+          '\n\tobjectProperty JSON NOT NULL' +
+          '\n)')
   })
 
   it('generates SQL schema for entity with default-value fields', () => {
@@ -106,9 +115,15 @@ describe('generateSqlSchema()', () => {
     }
     generateSqlSchema('pg', entities)
       .map(query => query.toString())
-      .join('; ')
+      .join(';\n')
       .should.be.equal(
-        'create table "entity" ("booleanProperty" boolean not null default \'0\', "enumProperty" text check ("enumProperty" in (\'option1\', \'option2\')) not null default \'option1\', "integerProperty" integer not null default \'0\', "stringProperty" text not null default \'value\', "objectProperty" json not null {})')
+        'CREATE TABLE entity (' +
+          '\n\tbooleanProperty BOOLEAN NOT NULL DEFAULT FALSE,' +
+          '\n\tenumProperty TEXT CHECK (enumProperty IN (\'option1\', \'option2\')) NOT NULL DEFAULT \'option1\',' +
+          '\n\tintegerProperty BIGINT NOT NULL DEFAULT 0,' +
+          '\n\tstringProperty TEXT NOT NULL DEFAULT \'value\',' +
+          '\n\tobjectProperty JSON NOT NULL DEFAULT \'{}\'::json' +
+          '\n)')
   })
 
   it('generates SQL schema for entity with nullable fields', () => {
@@ -144,12 +159,62 @@ describe('generateSqlSchema()', () => {
     }
     generateSqlSchema('pg', entities)
       .map(query => query.toString())
-      .join('; ')
+      .join(';\n')
       .should.be.equal(
-        'create table "entity" ("booleanProperty" boolean null, "enumProperty" text check ("enumProperty" in (\'option1\', \'option2\')) null, "integerProperty" integer null, "stringProperty" text null, "objectProperty" json null)')
+        'CREATE TABLE entity (' +
+          '\n\tbooleanProperty BOOLEAN NULL,' +
+          '\n\tenumProperty TEXT CHECK (enumProperty IN (\'option1\', \'option2\')) NULL,' +
+          '\n\tintegerProperty BIGINT NULL,' +
+          '\n\tstringProperty TEXT NULL,' +
+          '\n\tobjectProperty JSON NULL' +
+          '\n)')
   })
 
-  it('generates SQL schema for entities (array)', () => {
+  it('generates SQL schema for entity with basic arrays', () => {
+    const entities = {
+      collection: {
+        fields: {
+          identityProperty: {
+            type: 'integer',
+            identity: true
+          },
+          booleanProperty: {
+            type: 'boolean[]'
+          },
+          integerProperty: {
+            type: 'integer[]'
+          },
+          stringProperty: {
+            type: 'string[]'
+          },
+          enumProperty: {
+            type: 'enum[]',
+            enum: ['option1', 'option2']
+          },
+          objectProperty: {
+            type: 'json[]'
+          }
+        },
+        origin: '#'
+      }
+    }
+    generateSqlSchema('pg', entities)
+      .map(query => query.toString())
+      .join(';\n')
+      .should.be.equal(
+        'CREATE TABLE collection (' +
+        '\n\tidentityProperty BIGINT NOT NULL,' +
+        '\n\tbooleanProperty BOOLEAN[] NOT NULL,' +
+        '\n\tintegerProperty BIGINT[] NOT NULL,' +
+        '\n\tstringProperty TEXT[] NOT NULL,' +
+        '\n\tenumProperty TEXT[] CHECK (enumProperty <@ ARRAY[\'option1\', \'option2\']) NOT NULL,' +
+        '\n\tobjectProperty JSON[] NOT NULL,' +
+        '\n\tCONSTRAINT collection_primary PRIMARY KEY (identityProperty),' +
+        '\n\tCONSTRAINT collection_unique UNIQUE (identityProperty)' +
+        '\n)')
+  })
+
+  it('generates SQL schema for entities (complex array)', () => {
     const entities = {
       collection: {
         fields: {
@@ -168,7 +233,7 @@ describe('generateSqlSchema()', () => {
           '$collection~id': {
             identity: true,
             reference: {
-              depth: 1,
+              depth: 2,
               entity: 'collection',
               field: 'id'
             },
@@ -178,92 +243,123 @@ describe('generateSqlSchema()', () => {
             },
             type: 'integer'
           },
-          $value: {
+          otherId: {
+            identity: true,
             type: 'integer'
+          },
+          value: {
+            type: 'string'
           }
         },
-        foreignFields: [
-          '$collection~id'
-        ],
-        origin: '#/properties/array/items',
-        customSchema: {
-          properties: {
-            $value: {
-              type: 'integer'
-            }
-          },
-          type: 'object'
-        }
+        origin: '#/properties/array/items'
       }
     }
     generateSqlSchema('pg', entities)
       .map(query => query.toString())
-      .join('; ')
+      .join(';\n')
       .should.be.equal(
-        'create table "collection" ("id" integer not null);\n' +
-        'alter table "collection" add constraint "collection_primary" primary key ("id");\n' +
-        'alter table "collection" add constraint "collection_unique" unique ("id"); ' +
-        'create table "collection/array[@]" ("$collection~id" integer not null, "$value" integer not null);\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_primary" primary key ("$collection~id");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_unique" unique ("$collection~id");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_owner" foreign key ("$collection~id") references "collection" ("id") on update CASCADE on delete CASCADE')
+        'CREATE TABLE collection (' +
+        '\n\tid BIGINT NOT NULL,' +
+        '\n\tCONSTRAINT collection_primary PRIMARY KEY (id),' +
+        '\n\tCONSTRAINT collection_unique UNIQUE (id)' +
+        '\n);\n' +
+        'CREATE TABLE "collection/array[@]" (' +
+        '\n\t"$collection~id" BIGINT NOT NULL,' +
+        '\n\totherId BIGINT NOT NULL,' +
+        '\n\tvalue TEXT NOT NULL,' +
+        '\n\tCONSTRAINT "collection/array[@]_primary" PRIMARY KEY ("$collection~id", otherId),' +
+        '\n\tCONSTRAINT "collection/array[@]_unique" UNIQUE ("$collection~id", otherId),' +
+        '\n\tCONSTRAINT "collection/array[@]_ref0" FOREIGN KEY ("$collection~id")' +
+        '\n\t\tREFERENCES collection (id)' +
+        '\n\t\tON DELETE CASCADE' +
+        '\n\t\tON UPDATE CASCADE' +
+        '\n)')
   })
 
-  it('generates SQL schema for entities (complex array)', () => {
+  it('generates SQL schema for entities (composite identity)', () => {
     const entities = {
-      'collection': {
-        'fields': {
-          'id': {
-            'identity': true,
-            'type': 'integer'
+      collection: {
+        fields: {
+          idA: {
+            identity: true,
+            type: 'integer'
+          },
+          idB: {
+            identity: true,
+            type: 'integer'
           }
         },
-        'origin': '#',
+        origin: '#',
         relations: {
           'collection/array[@]': 'one-to-many'
         }
       },
       'collection/array[@]': {
-        'fields': {
-          '$collection~id': {
-            'identity': true,
-            'reference': {
-              'depth': 1,
-              'entity': 'collection',
-              'field': 'id'
+        fields: {
+          '$collection~idA': {
+            identity: true,
+            reference: {
+              depth: 2,
+              entity: 'collection',
+              field: 'idA'
             },
             relation: {
               entity: 'collection',
-              field: 'id'
+              field: 'idA'
             },
-            'type': 'integer'
+            type: 'integer'
           },
-          'value': {
-            'type': 'string'
+          '$collection~idB': {
+            identity: true,
+            reference: {
+              depth: 2,
+              entity: 'collection',
+              field: 'idB'
+            },
+            relation: {
+              entity: 'collection',
+              field: 'idB'
+            },
+            type: 'integer'
+          },
+          otherId: {
+            identity: true,
+            type: 'integer'
+          },
+          value: {
+            type: 'string'
           }
         },
-        'foreignFields': [
-          '$collection~id'
-        ],
-        'origin': '#/properties/array/items'
+        origin: '#/properties/array/items'
       }
     }
     generateSqlSchema('pg', entities)
       .map(query => query.toString())
-      .join('; ')
+      .join(';\n')
       .should.be.equal(
-        'create table "collection" ("id" integer not null);\n' +
-        'alter table "collection" add constraint "collection_primary" primary key ("id");\n' +
-        'alter table "collection" add constraint "collection_unique" unique ("id"); ' +
-        'create table "collection/array[@]" ("$collection~id" integer not null, "value" text not null);\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_primary" primary key ("$collection~id");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_unique" unique ("$collection~id");\n' +
-        'alter table "collection/array[@]" add constraint "collection/array[@]_owner" foreign key ("$collection~id") references "collection" ("id") on update CASCADE on delete CASCADE')
+        'CREATE TABLE collection (' +
+        '\n\tidA BIGINT NOT NULL,' +
+        '\n\tidB BIGINT NOT NULL,' +
+        '\n\tCONSTRAINT collection_primary PRIMARY KEY (idA, idB),' +
+        '\n\tCONSTRAINT collection_unique UNIQUE (idA, idB)' +
+        '\n);\n' +
+        'CREATE TABLE "collection/array[@]" (' +
+        '\n\t"$collection~idA" BIGINT NOT NULL,' +
+        '\n\t"$collection~idB" BIGINT NOT NULL,' +
+        '\n\totherId BIGINT NOT NULL,' +
+        '\n\tvalue TEXT NOT NULL,' +
+        '\n\tCONSTRAINT "collection/array[@]_primary" PRIMARY KEY ("$collection~idA", "$collection~idB", otherId),' +
+        '\n\tCONSTRAINT "collection/array[@]_unique" UNIQUE ("$collection~idA", "$collection~idB", otherId),' +
+        '\n\tCONSTRAINT "collection/array[@]_ref0" FOREIGN KEY ("$collection~idA", "$collection~idB")' +
+        '\n\t\tREFERENCES collection (idA, idB)' +
+        '\n\t\tON DELETE CASCADE' +
+        '\n\t\tON UPDATE CASCADE' +
+        '\n)')
   })
 
   it('generates SQL schema for entities (complex)', () => {
     const entities = {
-      'collection': {
+      collection: {
         fields: {
           simpleProperty: {
             identity: true,
@@ -302,15 +398,23 @@ describe('generateSqlSchema()', () => {
     }
     generateSqlSchema('pg', entities)
       .map(query => query.toString())
-      .join('; ')
+      .join(';\n')
       .should.be.equal(
-        'create table "collection" ("simpleProperty" integer not null);\n' +
-        'alter table "collection" add constraint "collection_primary" primary key ("simpleProperty");\n' +
-        'alter table "collection" add constraint "collection_unique" unique ("simpleProperty"); ' +
-        'create table "collection/complexObject" ("$collection~simpleProperty" integer not null, "otherSimpleProperty" integer not null);\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_primary" primary key ("$collection~simpleProperty");\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_unique" unique ("$collection~simpleProperty");\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_owner" foreign key ("$collection~simpleProperty") references "collection" ("simpleProperty") on update CASCADE on delete CASCADE')
+        'CREATE TABLE collection (' +
+        '\n\tsimpleProperty BIGINT NOT NULL,' +
+        '\n\tCONSTRAINT collection_primary PRIMARY KEY (simpleProperty),' +
+        '\n\tCONSTRAINT collection_unique UNIQUE (simpleProperty)' +
+        '\n);\n' +
+        'CREATE TABLE "collection/complexObject" (' +
+        '\n\t"$collection~simpleProperty" BIGINT NOT NULL,' +
+        '\n\totherSimpleProperty BIGINT NOT NULL,' +
+        '\n\tCONSTRAINT "collection/complexObject_primary" PRIMARY KEY ("$collection~simpleProperty"),' +
+        '\n\tCONSTRAINT "collection/complexObject_unique" UNIQUE ("$collection~simpleProperty"),' +
+        '\n\tCONSTRAINT "collection/complexObject_ref0" FOREIGN KEY ("$collection~simpleProperty")' +
+        '\n\t\tREFERENCES collection (simpleProperty)' +
+        '\n\t\tON DELETE CASCADE' +
+        '\n\t\tON UPDATE CASCADE' +
+        '\n)')
   })
 
   it('generates SQL schema for entities (complex with additionalProperties)', () => {
@@ -389,18 +493,32 @@ describe('generateSqlSchema()', () => {
     }
     generateSqlSchema('pg', entities)
       .map(query => query.toString())
-      .join('; ')
+      .join(';\n')
       .should.be.equal(
-        'create table "collection" ("simpleProperty" integer not null);\n' +
-        'alter table "collection" add constraint "collection_primary" primary key ("simpleProperty");\n' +
-        'alter table "collection" add constraint "collection_unique" unique ("simpleProperty"); ' +
-        'create table "collection/complexObject" ("$collection~simpleProperty" integer not null);\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_primary" primary key ("$collection~simpleProperty");\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_unique" unique ("$collection~simpleProperty");\n' +
-        'alter table "collection/complexObject" add constraint "collection/complexObject_owner" foreign key ("$collection~simpleProperty") references "collection" ("simpleProperty") on update CASCADE on delete CASCADE; ' +
-        'create table "collection/complexObject[@0]" ("$collection~simpleProperty" integer not null, "$property" text not null, "$value" json null);\n' +
-        'alter table "collection/complexObject[@0]" add constraint "collection/complexObject[@0]_primary" primary key ("$collection~simpleProperty", "$property");\n' +
-        'alter table "collection/complexObject[@0]" add constraint "collection/complexObject[@0]_unique" unique ("$collection~simpleProperty", "$property");\n' +
-        'alter table "collection/complexObject[@0]" add constraint "collection/complexObject[@0]_owner" foreign key ("$collection~simpleProperty") references "collection/complexObject" ("$collection~simpleProperty") on update CASCADE on delete CASCADE')
+        'CREATE TABLE collection (' +
+        '\n\tsimpleProperty BIGINT NOT NULL,' +
+        '\n\tCONSTRAINT collection_primary PRIMARY KEY (simpleProperty),' +
+        '\n\tCONSTRAINT collection_unique UNIQUE (simpleProperty)' +
+        '\n);\n' +
+        'CREATE TABLE "collection/complexObject" (' +
+        '\n\t"$collection~simpleProperty" BIGINT NOT NULL,' +
+        '\n\tCONSTRAINT "collection/complexObject_primary" PRIMARY KEY ("$collection~simpleProperty"),' +
+        '\n\tCONSTRAINT "collection/complexObject_unique" UNIQUE ("$collection~simpleProperty"),' +
+        '\n\tCONSTRAINT "collection/complexObject_ref0" FOREIGN KEY ("$collection~simpleProperty")' +
+        '\n\t\tREFERENCES collection (simpleProperty)' +
+        '\n\t\tON DELETE CASCADE' +
+        '\n\t\tON UPDATE CASCADE' +
+        '\n);\n' +
+        'CREATE TABLE "collection/complexObject[@0]" (' +
+        '\n\t"$collection~simpleProperty" BIGINT NOT NULL,' +
+        '\n\t"$property" TEXT NOT NULL,' +
+        '\n\t"$value" JSON NULL,' +
+        '\n\tCONSTRAINT "collection/complexObject[@0]_primary" PRIMARY KEY ("$collection~simpleProperty", "$property"),' +
+        '\n\tCONSTRAINT "collection/complexObject[@0]_unique" UNIQUE ("$collection~simpleProperty", "$property"),' +
+        '\n\tCONSTRAINT "collection/complexObject[@0]_ref0" FOREIGN KEY ("$collection~simpleProperty")' +
+        '\n\t\tREFERENCES "collection/complexObject" ("$collection~simpleProperty")' +
+        '\n\t\tON DELETE CASCADE' +
+        '\n\t\tON UPDATE CASCADE' +
+        '\n)')
   })
 })

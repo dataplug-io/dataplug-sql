@@ -2,12 +2,10 @@
 require('chai')
   .use(require('chai-as-promised'))
   .should()
-const knex = require('knex')
+const logger = require('winston')
 const { SqlSerializerStream } = require('../lib')
 
-const postgres = knex({
-  client: 'postgres'
-})
+logger.clear()
 
 describe('SqlSerializerStream', () => {
   it('emits SQL using metadata from data to output stream', (done) => {
@@ -17,21 +15,21 @@ describe('SqlSerializerStream', () => {
       writer
         .on('end', () => resolve(data))
         .on('error', reject)
-        .on('data', (chunk) => {
-          let queries = chunk
-          queries = queries.map(query => postgres.raw().set(query.sql, query.bindings).toString())
-          data = data.concat(queries)
-        })
+        .on('data', (chunk) => data.push(...chunk))
     })
-      .should.eventually.be.deep.equal(['insert into "collection:entity" ("property") values (\'value\')'])
+      .should.eventually.be.deep.equal([
+        'INSERT INTO "collection:entity" (\n\tproperty\n\t) VALUES (\n\t\'value\'\n\t)'
+      ])
       .and.notify(done)
 
     writer.write({
       entity: {
         metadata: {
-          property: {
-            type: 'string',
-            identity: true
+          fields: {
+            property: {
+              type: 'string',
+              identity: true
+            }
           }
         },
         data: [{
@@ -49,11 +47,7 @@ describe('SqlSerializerStream', () => {
       writer
         .on('end', () => resolve(data))
         .on('error', reject)
-        .on('data', (chunk) => {
-          let queries = chunk
-          queries = queries.map(query => postgres.raw().set(query.sql, query.bindings).toString())
-          data = data.concat(queries)
-        })
+        .on('data', (chunk) => data.push(...chunk))
 
       writer.write({
         entity: [{
@@ -68,11 +62,11 @@ describe('SqlSerializerStream', () => {
 
   it('supports epilogue and prologue', (done) => {
     const writer = new SqlSerializerStream('postgres', 'collection:', undefined, {
-      prologue: (dbClient, entityName, queries) => {
-        queries.push(dbClient.truncate())
+      prologue: (serializer, tableName, metadata, queries) => {
+        queries.push('PROLOGUE')
       },
-      epilogue: (dbClient, entityName, queries) => {
-        queries.push(dbClient.update({ property: 'otherValue' }))
+      epilogue: (serializer, tableName, metadata, queries) => {
+        queries.push('EPILOGUE')
       }
     })
     new Promise((resolve, reject) => {
@@ -80,25 +74,23 @@ describe('SqlSerializerStream', () => {
       writer
         .on('end', () => resolve(data))
         .on('error', reject)
-        .on('data', (chunk) => {
-          let queries = chunk
-          queries = queries.map(query => postgres.raw().set(query.sql, query.bindings).toString())
-          data = data.concat(queries)
-        })
+        .on('data', (chunk) => data.push(...chunk))
     })
       .should.eventually.be.deep.equal([
-        'truncate "collection:entity" restart identity',
-        'insert into "collection:entity" ("property") values (\'value\')',
-        'update "collection:entity" set "property" = \'otherValue\''
+        'PROLOGUE',
+        'INSERT INTO "collection:entity" (\n\tproperty\n\t) VALUES (\n\t\'value\'\n\t)',
+        'EPILOGUE'
       ])
       .and.notify(done)
 
     writer.write({
       entity: {
         metadata: {
-          property: {
-            type: 'string',
-            identity: true
+          fields: {
+            property: {
+              type: 'string',
+              identity: true
+            }
           }
         },
         data: [{
@@ -118,24 +110,22 @@ describe('SqlSerializerStream', () => {
       writer
         .on('end', () => resolve(data))
         .on('error', reject)
-        .on('data', (chunk) => {
-          let queries = chunk
-          queries = queries.map(query => postgres.raw().set(query.sql, query.bindings).toString())
-          data = data.concat(queries)
-        })
+        .on('data', (chunk) => data.push(...chunk))
     })
       .should.eventually.be.deep.equal([
-        'truncate "collection:entity" restart identity',
-        'insert into "collection:entity" ("property") values (\'value\')'
+        'TRUNCATE "collection:entity"',
+        'INSERT INTO "collection:entity" (\n\tproperty\n\t) VALUES (\n\t\'value\'\n\t)'
       ])
       .and.notify(done)
 
     writer.write({
       entity: {
         metadata: {
-          property: {
-            type: 'string',
-            identity: true
+          fields: {
+            property: {
+              type: 'string',
+              identity: true
+            }
           }
         },
         data: [{
@@ -155,24 +145,22 @@ describe('SqlSerializerStream', () => {
       writer
         .on('end', () => resolve(data))
         .on('error', reject)
-        .on('data', (chunk) => {
-          let queries = chunk
-          queries = queries.map(query => postgres.raw().set(query.sql, query.bindings).toString())
-          data = data.concat(queries)
-        })
+        .on('data', (chunk) => data.push(...chunk))
     })
       .should.eventually.be.deep.equal([
-        'update "collection:entity" set "property" = NULL',
-        'insert into "collection:entity" ("property") values (\'value\')'
+        'UPDATE "collection:entity"\n\tSET\n\t\tproperty = NULL',
+        'INSERT INTO "collection:entity" (\n\tproperty\n\t) VALUES (\n\t\'value\'\n\t)'
       ])
       .and.notify(done)
 
     writer.write({
       entity: {
         metadata: {
-          property: {
-            type: 'string',
-            identity: true
+          fields: {
+            property: {
+              type: 'string',
+              identity: true
+            }
           }
         },
         data: [{
@@ -200,25 +188,23 @@ describe('SqlSerializerStream', () => {
       writer
         .on('end', () => resolve(data))
         .on('error', reject)
-        .on('data', (chunk) => {
-          let queries = chunk
-          queries = queries.map(query => postgres.raw().set(query.sql, query.bindings).toString())
-          data = data.concat(queries)
-        })
+        .on('data', (chunk) => data.push(...chunk))
     })
       .should.eventually.be.deep.equal([
-        'update "collection:entity" set "property" = NULL',
-        'insert into "collection:entity" ("property") values (\'value\')',
-        'update "collection:entity" set "property" = \'override\''
+        'UPDATE "collection:entity"\n\tSET\n\t\tproperty = NULL',
+        'INSERT INTO "collection:entity" (\n\tproperty\n\t) VALUES (\n\t\'value\'\n\t)',
+        'UPDATE "collection:entity"\n\tSET\n\t\tproperty = \'override\''
       ])
       .and.notify(done)
 
     writer.write({
       entity: {
         metadata: {
-          property: {
-            type: 'string',
-            identity: true
+          fields: {
+            property: {
+              type: 'string',
+              identity: true
+            }
           }
         },
         data: [{
