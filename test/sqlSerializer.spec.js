@@ -234,11 +234,11 @@ describe('SqlSerializer', () => {
         '\n\tobjectProperty' +
         '\n\t) VALUES (' +
         '\n\t42,' +
-        '\n\tARRAY[TRUE],' +
-        '\n\tARRAY[0],' +
-        '\n\tARRAY[\'value\'],' +
-        '\n\tARRAY[\'option1\'],' +
-        '\n\tARRAY[\'{}\'::json]' +
+        '\n\tARRAY[TRUE]::BOOLEAN[],' +
+        '\n\tARRAY[0]::BIGINT[],' +
+        '\n\tARRAY[\'value\']::TEXT[],' +
+        '\n\tARRAY[\'option1\']::TEXT[],' +
+        '\n\tARRAY[\'{}\'::json]::JSON[]' +
         '\n\t)')
   })
 
