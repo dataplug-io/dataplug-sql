@@ -49,17 +49,17 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tbooleanProperty,' +
-        '\n\tintegerProperty,' +
-        '\n\tstringProperty,' +
-        '\n\tenumProperty,' +
-        '\n\tobjectProperty' +
+        '\n\t\tbooleanProperty,' +
+        '\n\t\tintegerProperty,' +
+        '\n\t\tstringProperty,' +
+        '\n\t\tenumProperty,' +
+        '\n\t\tobjectProperty' +
         '\n\t) VALUES (' +
-        '\n\tTRUE,' +
-        '\n\t0,' +
-        '\n\t\'value\',' +
-        '\n\t\'option1\',' +
-        '\n\t\'{}\'::json' +
+        '\n\t\tTRUE,' +
+        '\n\t\t0,' +
+        '\n\t\t\'value\',' +
+        '\n\t\t\'option1\',' +
+        '\n\t\t\'{}\'::json' +
         '\n\t)')
   })
 
@@ -109,17 +109,17 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tbooleanProperty,' +
-        '\n\tintegerProperty,' +
-        '\n\tstringProperty,' +
-        '\n\tenumProperty,' +
-        '\n\tobjectProperty' +
+        '\n\t\tbooleanProperty,' +
+        '\n\t\tintegerProperty,' +
+        '\n\t\tstringProperty,' +
+        '\n\t\tenumProperty,' +
+        '\n\t\tobjectProperty' +
         '\n\t) VALUES (' +
-        '\n\tTRUE,' +
-        '\n\t0,' +
-        '\n\t\'value\',' +
-        '\n\t\'option1\',' +
-        '\n\t\'{}\'::json' +
+        '\n\t\tTRUE,' +
+        '\n\t\t0,' +
+        '\n\t\t\'value\',' +
+        '\n\t\t\'option1\',' +
+        '\n\t\t\'{}\'::json' +
         '\n\t)')
   })
 
@@ -169,17 +169,17 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tbooleanProperty,' +
-        '\n\tintegerProperty,' +
-        '\n\tstringProperty,' +
-        '\n\tenumProperty,' +
-        '\n\tobjectProperty' +
+        '\n\t\tbooleanProperty,' +
+        '\n\t\tintegerProperty,' +
+        '\n\t\tstringProperty,' +
+        '\n\t\tenumProperty,' +
+        '\n\t\tobjectProperty' +
         '\n\t) VALUES (' +
-        '\n\tNULL,' +
-        '\n\tNULL,' +
-        '\n\tNULL,' +
-        '\n\tNULL,' +
-        '\n\tNULL' +
+        '\n\t\tNULL,' +
+        '\n\t\tNULL,' +
+        '\n\t\tNULL,' +
+        '\n\t\tNULL,' +
+        '\n\t\tNULL' +
         '\n\t)')
   })
 
@@ -226,19 +226,19 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tidentityProperty,' +
-        '\n\tbooleanProperty,' +
-        '\n\tintegerProperty,' +
-        '\n\tstringProperty,' +
-        '\n\tenumProperty,' +
-        '\n\tobjectProperty' +
+        '\n\t\tidentityProperty,' +
+        '\n\t\tbooleanProperty,' +
+        '\n\t\tintegerProperty,' +
+        '\n\t\tstringProperty,' +
+        '\n\t\tenumProperty,' +
+        '\n\t\tobjectProperty' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\tARRAY[TRUE]::BOOLEAN[],' +
-        '\n\tARRAY[0]::BIGINT[],' +
-        '\n\tARRAY[\'value\']::TEXT[],' +
-        '\n\tARRAY[\'option1\']::TEXT[],' +
-        '\n\tARRAY[\'{}\'::json]::JSON[]' +
+        '\n\t\t42,' +
+        '\n\t\tARRAY[TRUE]::BOOLEAN[],' +
+        '\n\t\tARRAY[0]::BIGINT[],' +
+        '\n\t\tARRAY[\'value\']::TEXT[],' +
+        '\n\t\tARRAY[\'option1\']::TEXT[],' +
+        '\n\t\tARRAY[\'{}\'::json]::JSON[]' +
         '\n\t)')
   })
 
@@ -288,9 +288,9 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tid' +
+        '\n\t\tid' +
         '\n\t) VALUES (' +
-        '\n\t42' +
+        '\n\t\t42' +
         '\n\t)')
   })
 
@@ -321,11 +321,11 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tid,' +
-        '\n\t"array"' +
+        '\n\t\tid,' +
+        '\n\t\t"array"' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\tNULL' +
+        '\n\t\t42,' +
+        '\n\t\tNULL' +
         '\n\t)')
   })
 
@@ -384,18 +384,18 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tid' +
+        '\n\t\tid' +
         '\n\t) VALUES (' +
-        '\n\t42' +
+        '\n\t\t42' +
         '\n\t);\n' +
         'INSERT INTO "collection/array[@]" (' +
-        '\n\t"$collection~id",' +
-        '\n\totherId,' +
-        '\n\tvalue' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\totherId,' +
+        '\n\t\tvalue' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t1,' +
-        '\n\t\'value\'' +
+        '\n\t\t42,' +
+        '\n\t\t1,' +
+        '\n\t\t\'value\'' +
         '\n\t)')
   })
 
@@ -449,16 +449,16 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tsimpleProperty' +
+        '\n\t\tsimpleProperty' +
         '\n\t) VALUES (' +
-        '\n\t0' +
+        '\n\t\t0' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject" (' +
-        '\n\t"$collection~simpleProperty",' +
-        '\n\totherSimpleProperty' +
+        '\n\t\t"$collection~simpleProperty",' +
+        '\n\t\totherSimpleProperty' +
         '\n\t) VALUES (' +
-        '\n\t0,' +
-        '\n\t0' +
+        '\n\t\t0,' +
+        '\n\t\t0' +
         '\n\t)')
   })
 
@@ -550,59 +550,59 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tid' +
+        '\n\t\tid' +
         '\n\t) VALUES (' +
-        '\n\t42' +
+        '\n\t\t42' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject" (' +
-        '\n\t"$collection~id"' +
+        '\n\t\t"$collection~id"' +
         '\n\t) VALUES (' +
-        '\n\t42' +
+        '\n\t\t42' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\t"$value"' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\t"$value"' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'booleanProperty\',' +
-        '\n\t\'true\'::json' +
+        '\n\t\t42,' +
+        '\n\t\t\'booleanProperty\',' +
+        '\n\t\t\'true\'::json' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\t"$value"' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\t"$value"' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'integerProperty\',' +
-        '\n\t\'0\'::json' +
+        '\n\t\t42,' +
+        '\n\t\t\'integerProperty\',' +
+        '\n\t\t\'0\'::json' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\t"$value"' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\t"$value"' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'stringProperty\',' +
-        '\n\t\'"value"\'::json' +
+        '\n\t\t42,' +
+        '\n\t\t\'stringProperty\',' +
+        '\n\t\t\'"value"\'::json' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\t"$value"' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\t"$value"' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'enumProperty\',' +
-        '\n\t\'"option1"\'::json' +
+        '\n\t\t42,' +
+        '\n\t\t\'enumProperty\',' +
+        '\n\t\t\'"option1"\'::json' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\t"$value"' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\t"$value"' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'objectProperty\',' +
-        '\n\t\'{}\'::json' +
+        '\n\t\t42,' +
+        '\n\t\t\'objectProperty\',' +
+        '\n\t\t\'{}\'::json' +
         '\n\t)')
   })
 
@@ -690,32 +690,32 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tid' +
+        '\n\t\tid' +
         '\n\t) VALUES (' +
-        '\n\t42' +
+        '\n\t\t42' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject" (' +
-        '\n\t"$collection~id"' +
+        '\n\t\t"$collection~id"' +
         '\n\t) VALUES (' +
-        '\n\t42' +
+        '\n\t\t42' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\t"$value"' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\t"$value"' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'integerProperty0\',' +
-        '\n\t0' +
+        '\n\t\t42,' +
+        '\n\t\t\'integerProperty0\',' +
+        '\n\t\t0' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\t"$value"' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\t"$value"' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'integerProperty1\',' +
-        '\n\t1' +
+        '\n\t\t42,' +
+        '\n\t\t\'integerProperty1\',' +
+        '\n\t\t1' +
         '\n\t)')
   })
 
@@ -800,32 +800,32 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tid' +
+        '\n\t\tid' +
         '\n\t) VALUES (' +
-        '\n\t42' +
+        '\n\t\t42' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject" (' +
-        '\n\t"$collection~id"' +
+        '\n\t\t"$collection~id"' +
         '\n\t) VALUES (' +
-        '\n\t42' +
+        '\n\t\t42' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\totherValue' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\totherValue' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'objectProperty0\',' +
-        '\n\t0' +
+        '\n\t\t42,' +
+        '\n\t\t\'objectProperty0\',' +
+        '\n\t\t0' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\totherValue' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\totherValue' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'objectProperty1\',' +
-        '\n\t1' +
+        '\n\t\t42,' +
+        '\n\t\t\'objectProperty1\',' +
+        '\n\t\t1' +
         '\n\t)')
   })
 
@@ -913,32 +913,32 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tid' +
+        '\n\t\tid' +
         '\n\t) VALUES (' +
-        '\n\t42' +
+        '\n\t\t42' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject" (' +
-        '\n\t"$collection~id"' +
+        '\n\t\t"$collection~id"' +
         '\n\t) VALUES (' +
-        '\n\t42' +
+        '\n\t\t42' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\t"$value"' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\t"$value"' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'integerProperty0\',' +
-        '\n\t0' +
+        '\n\t\t42,' +
+        '\n\t\t\'integerProperty0\',' +
+        '\n\t\t0' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\t"$value"' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\t"$value"' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'integerProperty1\',' +
-        '\n\t1' +
+        '\n\t\t42,' +
+        '\n\t\t\'integerProperty1\',' +
+        '\n\t\t1' +
         '\n\t)')
   })
 
@@ -1023,32 +1023,32 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tid' +
+        '\n\t\tid' +
         '\n\t) VALUES (' +
-        '\n\t42' +
+        '\n\t\t42' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject" (' +
-        '\n\t"$collection~id"' +
+        '\n\t\t"$collection~id"' +
         '\n\t) VALUES (' +
-        '\n\t42' +
+        '\n\t\t42' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\totherValue' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\totherValue' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'objectProperty0\',' +
-        '\n\t0' +
+        '\n\t\t42,' +
+        '\n\t\t\'objectProperty0\',' +
+        '\n\t\t0' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject[@0]" (' +
-        '\n\t"$collection~id",' +
-        '\n\t"$property",' +
-        '\n\totherValue' +
+        '\n\t\t"$collection~id",' +
+        '\n\t\t"$property",' +
+        '\n\t\totherValue' +
         '\n\t) VALUES (' +
-        '\n\t42,' +
-        '\n\t\'objectProperty1\',' +
-        '\n\t1' +
+        '\n\t\t42,' +
+        '\n\t\t\'objectProperty1\',' +
+        '\n\t\t1' +
         '\n\t)')
   })
 
@@ -1072,9 +1072,9 @@ describe('SqlSerializer', () => {
         '\n\tWHERE' +
         '\n\t\tproperty = \'value\';\n' +
         'INSERT INTO collection (' +
-        '\n\tproperty' +
+        '\n\t\tproperty' +
         '\n\t) VALUES (' +
-        '\n\t\'value\'' +
+        '\n\t\t\'value\'' +
         '\n\t)')
   })
 
@@ -1099,11 +1099,11 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tproperty,' +
-        '\n\tvalue' +
+        '\n\t\tproperty,' +
+        '\n\t\tvalue' +
         '\n\t) VALUES (' +
-        '\n\t\'key\',' +
-        '\n\t\'value\'' +
+        '\n\t\t\'key\',' +
+        '\n\t\t\'value\'' +
         '\n\t)' +
         '\n\tON CONFLICT (' +
         '\n\t\tproperty' +
@@ -1128,9 +1128,9 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\tproperty' +
+        '\n\t\tproperty' +
         '\n\t) VALUES (' +
-        '\n\t\'value\'' +
+        '\n\t\t\'value\'' +
         '\n\t)' +
         '\n\tON CONFLICT DO NOTHING')
   })
@@ -1194,16 +1194,16 @@ describe('SqlSerializer', () => {
     new SqlSerializer('pg').serializeData(data, undefined, metadata)
       .map(query => query.toString())
       .should.be.deep.equal([
-        'INSERT INTO collection (\n\tid\n\t) VALUES (\n\t42\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t"$collection~id",\n\totherId,\n\tvalue\n\t) VALUES (\n\t42,\n\t1,\n\t0\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t"$collection~id",\n\totherId,\n\tvalue\n\t) VALUES (\n\t42,\n\t2,\n\t1\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t"$collection~id",\n\totherId,\n\tvalue\n\t) VALUES (\n\t42,\n\t3,\n\t1\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t"$collection~id",\n\totherId,\n\tvalue\n\t) VALUES (\n\t42,\n\t4,\n\t2\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t"$collection~id",\n\totherId,\n\tvalue\n\t) VALUES (\n\t42,\n\t5,\n\t3\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t"$collection~id",\n\totherId,\n\tvalue\n\t) VALUES (\n\t42,\n\t6,\n\t5\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t"$collection~id",\n\totherId,\n\tvalue\n\t) VALUES (\n\t42,\n\t7,\n\t8\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t"$collection~id",\n\totherId,\n\tvalue\n\t) VALUES (\n\t42,\n\t8,\n\t13\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t"$collection~id",\n\totherId,\n\tvalue\n\t) VALUES (\n\t42,\n\t9,\n\t21\n\t)'
+        'INSERT INTO collection (\n\t\tid\n\t) VALUES (\n\t\t42\n\t)',
+        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t1,\n\t\t0\n\t)',
+        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t2,\n\t\t1\n\t)',
+        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t3,\n\t\t1\n\t)',
+        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t4,\n\t\t2\n\t)',
+        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t5,\n\t\t3\n\t)',
+        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t6,\n\t\t5\n\t)',
+        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t7,\n\t\t8\n\t)',
+        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t8,\n\t\t13\n\t)',
+        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t9,\n\t\t21\n\t)'
       ])
   })
 })

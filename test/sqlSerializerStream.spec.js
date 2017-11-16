@@ -18,7 +18,7 @@ describe('SqlSerializerStream', () => {
         .on('data', (chunk) => data.push(...chunk))
     })
       .should.eventually.be.deep.equal([
-        'INSERT INTO "collection:entity" (\n\tproperty\n\t) VALUES (\n\t\'value\'\n\t)'
+        'INSERT INTO "collection:entity" (\n\t\tproperty\n\t) VALUES (\n\t\t\'value\'\n\t)'
       ])
       .and.notify(done)
 
@@ -80,7 +80,7 @@ describe('SqlSerializerStream', () => {
     })
       .should.eventually.be.deep.equal([
         'PROLOGUE',
-        'INSERT INTO "collection:entity" (\n\tproperty\n\t) VALUES (\n\t\'value\'\n\t)',
+        'INSERT INTO "collection:entity" (\n\t\tproperty\n\t) VALUES (\n\t\t\'value\'\n\t)',
         'EPILOGUE'
       ])
       .and.notify(done)
@@ -116,7 +116,7 @@ describe('SqlSerializerStream', () => {
     })
       .should.eventually.be.deep.equal([
         'TRUNCATE "collection:entity"',
-        'INSERT INTO "collection:entity" (\n\tproperty\n\t) VALUES (\n\t\'value\'\n\t)'
+        'INSERT INTO "collection:entity" (\n\t\tproperty\n\t) VALUES (\n\t\t\'value\'\n\t)'
       ])
       .and.notify(done)
 
@@ -151,7 +151,7 @@ describe('SqlSerializerStream', () => {
     })
       .should.eventually.be.deep.equal([
         'UPDATE "collection:entity"\n\tSET\n\t\tproperty = NULL',
-        'INSERT INTO "collection:entity" (\n\tproperty\n\t) VALUES (\n\t\'value\'\n\t)'
+        'INSERT INTO "collection:entity" (\n\t\tproperty\n\t) VALUES (\n\t\t\'value\'\n\t)'
       ])
       .and.notify(done)
 
@@ -194,7 +194,7 @@ describe('SqlSerializerStream', () => {
     })
       .should.eventually.be.deep.equal([
         'UPDATE "collection:entity"\n\tSET\n\t\tproperty = NULL',
-        'INSERT INTO "collection:entity" (\n\tproperty\n\t) VALUES (\n\t\'value\'\n\t)',
+        'INSERT INTO "collection:entity" (\n\t\tproperty\n\t) VALUES (\n\t\t\'value\'\n\t)',
         'UPDATE "collection:entity"\n\tSET\n\t\tproperty = \'override\''
       ])
       .and.notify(done)
