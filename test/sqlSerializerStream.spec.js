@@ -41,7 +41,9 @@ describe('SqlSerializerStream', () => {
   })
 
   it('rejects without metadata', (done) => {
-    const writer = new SqlSerializerStream('postgres', 'collection:')
+    const writer = new SqlSerializerStream('postgres', 'collection:', undefined, {
+      abortOnError: true
+    })
     new Promise((resolve, reject) => {
       let data = []
       writer
