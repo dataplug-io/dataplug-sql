@@ -8,6 +8,45 @@ const { SqlSerializer } = require('../lib')
 logger.clear()
 
 describe('SqlSerializer', () => {
+  it('serializes undefined data', () => {
+    const metadata = {
+      collection: {
+        fields: {
+          booleanProperty: {
+            type: 'boolean'
+          },
+          enumProperty: {
+            enum: [
+              'option1',
+              'option2'
+            ],
+            type: 'enum'
+          },
+          integerProperty: {
+            type: 'integer'
+          },
+          stringProperty: {
+            type: 'string'
+          },
+          objectProperty: {
+            type: 'json'
+          }
+        },
+        origin: '#'
+      }
+    }
+    const data = {
+      collection: [{}]
+    }
+    new SqlSerializer('pg').serializeData(data, undefined, metadata)
+      .map(query => query.toString())
+      .join(';\n')
+      .should.be.equal(
+        'INSERT INTO collection (' +
+        '\n\t) VALUES (' +
+        '\n\t)')
+  })
+
   it('serializes basic data', () => {
     const metadata = {
       collection: {

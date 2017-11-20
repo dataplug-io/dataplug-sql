@@ -70,11 +70,11 @@ describe('generateSqlSchema()', () => {
       .join(';\n')
       .should.be.equal(
         'CREATE TABLE entity (' +
-          '\n\tbooleanProperty BOOLEAN NOT NULL,' +
-          '\n\tenumProperty TEXT CHECK (enumProperty IN (\'option1\', \'option2\')) NOT NULL,' +
-          '\n\tintegerProperty BIGINT NOT NULL,' +
-          '\n\tstringProperty TEXT NOT NULL,' +
-          '\n\tobjectProperty JSON NOT NULL' +
+          '\n\tbooleanProperty BOOLEAN NULL,' +
+          '\n\tenumProperty TEXT CHECK (enumProperty IN (\'option1\', \'option2\')) NULL,' +
+          '\n\tintegerProperty BIGINT NULL,' +
+          '\n\tstringProperty TEXT NULL,' +
+          '\n\tobjectProperty JSON NULL' +
           '\n)')
   })
 
@@ -200,11 +200,11 @@ describe('generateSqlSchema()', () => {
       .should.be.equal(
         'CREATE TABLE collection (' +
         '\n\tidentityProperty BIGINT NOT NULL,' +
-        '\n\tbooleanProperty BOOLEAN[] NOT NULL,' +
-        '\n\tintegerProperty BIGINT[] NOT NULL,' +
-        '\n\tstringProperty TEXT[] NOT NULL,' +
-        '\n\tenumProperty TEXT[] CHECK (enumProperty <@ ARRAY[\'option1\', \'option2\']) NOT NULL,' +
-        '\n\tobjectProperty JSON[] NOT NULL,' +
+        '\n\tbooleanProperty BOOLEAN[] NULL,' +
+        '\n\tintegerProperty BIGINT[] NULL,' +
+        '\n\tstringProperty TEXT[] NULL,' +
+        '\n\tenumProperty TEXT[] CHECK (enumProperty <@ ARRAY[\'option1\', \'option2\']) NULL,' +
+        '\n\tobjectProperty JSON[] NULL,' +
         '\n\tCONSTRAINT collection_primary PRIMARY KEY (identityProperty),' +
         '\n\tCONSTRAINT collection_unique UNIQUE (identityProperty)' +
         '\n)')
@@ -262,7 +262,7 @@ describe('generateSqlSchema()', () => {
         'CREATE TABLE "collection/array[@]" (' +
         '\n\t"$collection~id" BIGINT NOT NULL,' +
         '\n\totherId BIGINT NOT NULL,' +
-        '\n\tvalue TEXT NOT NULL,' +
+        '\n\tvalue TEXT NULL,' +
         '\n\tCONSTRAINT "collection/array[@]_primary" PRIMARY KEY ("$collection~id", otherId),' +
         '\n\tCONSTRAINT "collection/array[@]_unique" UNIQUE ("$collection~id", otherId),' +
         '\n\tCONSTRAINT "collection/array[@]_ref0" FOREIGN KEY ("$collection~id")' +
@@ -343,7 +343,7 @@ describe('generateSqlSchema()', () => {
         '\n\t"$collection~idA" BIGINT NOT NULL,' +
         '\n\t"$collection~idB" BIGINT NOT NULL,' +
         '\n\totherId BIGINT NOT NULL,' +
-        '\n\tvalue TEXT NOT NULL,' +
+        '\n\tvalue TEXT NULL,' +
         '\n\tCONSTRAINT "collection/array[@]_primary" PRIMARY KEY ("$collection~idA", "$collection~idB", otherId),' +
         '\n\tCONSTRAINT "collection/array[@]_unique" UNIQUE ("$collection~idA", "$collection~idB", otherId),' +
         '\n\tCONSTRAINT "collection/array[@]_ref0" FOREIGN KEY ("$collection~idA", "$collection~idB")' +
@@ -403,7 +403,7 @@ describe('generateSqlSchema()', () => {
         '\n);\n' +
         'CREATE TABLE "collection/complexObject" (' +
         '\n\t"$collection~id" BIGINT NOT NULL,' +
-        '\n\totherSimpleProperty BIGINT NOT NULL,' +
+        '\n\totherSimpleProperty BIGINT NULL,' +
         '\n\tCONSTRAINT "collection/complexObject_primary" PRIMARY KEY ("$collection~id"),' +
         '\n\tCONSTRAINT "collection/complexObject_unique" UNIQUE ("$collection~id"),' +
         '\n\tCONSTRAINT "collection/complexObject_ref0" FOREIGN KEY ("$collection~id")' +
