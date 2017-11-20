@@ -403,7 +403,7 @@ describe('SqlSerializer', () => {
     const metadata = {
       collection: {
         fields: {
-          simpleProperty: {
+          id: {
             identity: true,
             type: 'integer'
           }
@@ -415,17 +415,17 @@ describe('SqlSerializer', () => {
       },
       'collection/complexObject': {
         fields: {
-          '$collection~simpleProperty': {
+          '$collection~id': {
             identity: true,
             type: 'integer',
             reference: {
               entity: 'collection',
-              field: 'simpleProperty',
+              field: 'id',
               depth: 1
             },
             relation: {
               entity: 'collection',
-              field: 'simpleProperty'
+              field: 'id'
             }
           },
           otherSimpleProperty: {
@@ -437,10 +437,10 @@ describe('SqlSerializer', () => {
     }
     const data = {
       collection: [{
-        simpleProperty: 0
+        id: 0
       }],
       'collection/complexObject': [{
-        '$collection~simpleProperty': 0,
+        '$collection~id': 0,
         otherSimpleProperty: 0
       }]
     }
@@ -449,12 +449,12 @@ describe('SqlSerializer', () => {
       .join(';\n')
       .should.be.equal(
         'INSERT INTO collection (' +
-        '\n\t\tsimpleProperty' +
+        '\n\t\tid' +
         '\n\t) VALUES (' +
         '\n\t\t0' +
         '\n\t);\n' +
         'INSERT INTO "collection/complexObject" (' +
-        '\n\t\t"$collection~simpleProperty",' +
+        '\n\t\t"$collection~id",' +
         '\n\t\totherSimpleProperty' +
         '\n\t) VALUES (' +
         '\n\t\t0,' +
@@ -1133,77 +1133,5 @@ describe('SqlSerializer', () => {
         '\n\t\t\'value\'' +
         '\n\t)' +
         '\n\tON CONFLICT DO NOTHING')
-  })
-
-  it('serializes 2 related entities in parent-first order', () => {
-    const data = {
-      'collection/array[@]': [
-        { '$collection~id': 42, otherId: 1, value: 0 },
-        { '$collection~id': 42, otherId: 2, value: 1 },
-        { '$collection~id': 42, otherId: 3, value: 1 },
-        { '$collection~id': 42, otherId: 4, value: 2 },
-        { '$collection~id': 42, otherId: 5, value: 3 },
-        { '$collection~id': 42, otherId: 6, value: 5 },
-        { '$collection~id': 42, otherId: 7, value: 8 },
-        { '$collection~id': 42, otherId: 8, value: 13 },
-        { '$collection~id': 42, otherId: 9, value: 21 }
-      ],
-      collection: [{
-        id: 42
-      }]
-    }
-    const metadata = {
-      collection: {
-        fields: {
-          id: {
-            identity: true,
-            type: 'integer'
-          }
-        },
-        origin: '#',
-        relations: {
-          'collection/array[@]': 'one-to-many'
-        }
-      },
-      'collection/array[@]': {
-        fields: {
-          '$collection~id': {
-            identity: true,
-            reference: {
-              depth: 2,
-              entity: 'collection',
-              field: 'id'
-            },
-            relation: {
-              entity: 'collection',
-              field: 'id'
-            },
-            type: 'integer'
-          },
-          otherId: {
-            identity: true,
-            type: 'integer'
-          },
-          value: {
-            type: 'integer'
-          }
-        },
-        origin: '#/properties/array/items'
-      }
-    }
-    new SqlSerializer('pg').serializeData(data, undefined, metadata)
-      .map(query => query.toString())
-      .should.be.deep.equal([
-        'INSERT INTO collection (\n\t\tid\n\t) VALUES (\n\t\t42\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t1,\n\t\t0\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t2,\n\t\t1\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t3,\n\t\t1\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t4,\n\t\t2\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t5,\n\t\t3\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t6,\n\t\t5\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t7,\n\t\t8\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t8,\n\t\t13\n\t)',
-        'INSERT INTO "collection/array[@]" (\n\t\t"$collection~id",\n\t\totherId,\n\t\tvalue\n\t) VALUES (\n\t\t42,\n\t\t9,\n\t\t21\n\t)'
-      ])
   })
 })

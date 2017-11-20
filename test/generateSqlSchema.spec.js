@@ -12,15 +12,13 @@ describe('generateSqlSchema()', () => {
     const entities = {}
     generateSqlSchema('pg', entities)
       .map(query => query.toString())
-      .join('; ')
+      .join(';\n')
       .should.be.equal('')
   })
 
   it('generates SQL schema for single empty entity', () => {
     const entities = {
-      entity: {
-
-      }
+      entity: {}
     }
     generateSqlSchema('pg', entities)
       .map(query => query.toString())
@@ -30,10 +28,8 @@ describe('generateSqlSchema()', () => {
 
   it('generates SQL schema for two empty entity', () => {
     const entities = {
-      entityA: {
-      },
-      entityB: {
-      }
+      entityA: {},
+      entityB: {}
     }
     generateSqlSchema('pg', entities)
       .map(query => query.toString())
@@ -361,7 +357,7 @@ describe('generateSqlSchema()', () => {
     const entities = {
       collection: {
         fields: {
-          simpleProperty: {
+          id: {
             identity: true,
             type: 'integer'
           }
@@ -373,17 +369,17 @@ describe('generateSqlSchema()', () => {
       },
       'collection/complexObject': {
         fields: {
-          '$collection~simpleProperty': {
+          '$collection~id': {
             identity: true,
             type: 'integer',
             reference: {
               entity: 'collection',
-              field: 'simpleProperty',
+              field: 'id',
               depth: 1
             },
             relation: {
               entity: 'collection',
-              field: 'simpleProperty'
+              field: 'id'
             }
           },
           otherSimpleProperty: {
@@ -392,7 +388,7 @@ describe('generateSqlSchema()', () => {
         },
         origin: '#/properties/complexObject',
         foreignFields: [
-          '$collection~simpleProperty'
+          '$collection~id'
         ]
       }
     }
@@ -401,17 +397,17 @@ describe('generateSqlSchema()', () => {
       .join(';\n')
       .should.be.equal(
         'CREATE TABLE collection (' +
-        '\n\tsimpleProperty BIGINT NOT NULL,' +
-        '\n\tCONSTRAINT collection_primary PRIMARY KEY (simpleProperty),' +
-        '\n\tCONSTRAINT collection_unique UNIQUE (simpleProperty)' +
+        '\n\tid BIGINT NOT NULL,' +
+        '\n\tCONSTRAINT collection_primary PRIMARY KEY (id),' +
+        '\n\tCONSTRAINT collection_unique UNIQUE (id)' +
         '\n);\n' +
         'CREATE TABLE "collection/complexObject" (' +
-        '\n\t"$collection~simpleProperty" BIGINT NOT NULL,' +
+        '\n\t"$collection~id" BIGINT NOT NULL,' +
         '\n\totherSimpleProperty BIGINT NOT NULL,' +
-        '\n\tCONSTRAINT "collection/complexObject_primary" PRIMARY KEY ("$collection~simpleProperty"),' +
-        '\n\tCONSTRAINT "collection/complexObject_unique" UNIQUE ("$collection~simpleProperty"),' +
-        '\n\tCONSTRAINT "collection/complexObject_ref0" FOREIGN KEY ("$collection~simpleProperty")' +
-        '\n\t\tREFERENCES collection (simpleProperty)' +
+        '\n\tCONSTRAINT "collection/complexObject_primary" PRIMARY KEY ("$collection~id"),' +
+        '\n\tCONSTRAINT "collection/complexObject_unique" UNIQUE ("$collection~id"),' +
+        '\n\tCONSTRAINT "collection/complexObject_ref0" FOREIGN KEY ("$collection~id")' +
+        '\n\t\tREFERENCES collection (id)' +
         '\n\t\tON DELETE CASCADE' +
         '\n\t\tON UPDATE CASCADE' +
         '\n)')
@@ -421,7 +417,7 @@ describe('generateSqlSchema()', () => {
     const entities = {
       collection: {
         fields: {
-          simpleProperty: {
+          id: {
             identity: true,
             type: 'integer'
           }
@@ -433,16 +429,16 @@ describe('generateSqlSchema()', () => {
       },
       'collection/complexObject': {
         fields: {
-          '$collection~simpleProperty': {
+          '$collection~id': {
             identity: true,
             reference: {
               depth: 1,
               entity: 'collection',
-              field: 'simpleProperty'
+              field: 'id'
             },
             relation: {
               entity: 'collection',
-              field: 'simpleProperty'
+              field: 'id'
             },
             type: 'integer'
           }
@@ -466,16 +462,16 @@ describe('generateSqlSchema()', () => {
           type: 'object'
         },
         fields: {
-          '$collection~simpleProperty': {
+          '$collection~id': {
             identity: true,
             reference: {
               depth: 2,
               entity: 'collection',
-              field: 'simpleProperty'
+              field: 'id'
             },
             relation: {
               entity: 'collection/complexObject',
-              field: '$collection~simpleProperty'
+              field: '$collection~id'
             },
             type: 'integer'
           },
@@ -496,27 +492,27 @@ describe('generateSqlSchema()', () => {
       .join(';\n')
       .should.be.equal(
         'CREATE TABLE collection (' +
-        '\n\tsimpleProperty BIGINT NOT NULL,' +
-        '\n\tCONSTRAINT collection_primary PRIMARY KEY (simpleProperty),' +
-        '\n\tCONSTRAINT collection_unique UNIQUE (simpleProperty)' +
+        '\n\tid BIGINT NOT NULL,' +
+        '\n\tCONSTRAINT collection_primary PRIMARY KEY (id),' +
+        '\n\tCONSTRAINT collection_unique UNIQUE (id)' +
         '\n);\n' +
         'CREATE TABLE "collection/complexObject" (' +
-        '\n\t"$collection~simpleProperty" BIGINT NOT NULL,' +
-        '\n\tCONSTRAINT "collection/complexObject_primary" PRIMARY KEY ("$collection~simpleProperty"),' +
-        '\n\tCONSTRAINT "collection/complexObject_unique" UNIQUE ("$collection~simpleProperty"),' +
-        '\n\tCONSTRAINT "collection/complexObject_ref0" FOREIGN KEY ("$collection~simpleProperty")' +
-        '\n\t\tREFERENCES collection (simpleProperty)' +
+        '\n\t"$collection~id" BIGINT NOT NULL,' +
+        '\n\tCONSTRAINT "collection/complexObject_primary" PRIMARY KEY ("$collection~id"),' +
+        '\n\tCONSTRAINT "collection/complexObject_unique" UNIQUE ("$collection~id"),' +
+        '\n\tCONSTRAINT "collection/complexObject_ref0" FOREIGN KEY ("$collection~id")' +
+        '\n\t\tREFERENCES collection (id)' +
         '\n\t\tON DELETE CASCADE' +
         '\n\t\tON UPDATE CASCADE' +
         '\n);\n' +
         'CREATE TABLE "collection/complexObject[@0]" (' +
-        '\n\t"$collection~simpleProperty" BIGINT NOT NULL,' +
+        '\n\t"$collection~id" BIGINT NOT NULL,' +
         '\n\t"$property" TEXT NOT NULL,' +
         '\n\t"$value" JSON NULL,' +
-        '\n\tCONSTRAINT "collection/complexObject[@0]_primary" PRIMARY KEY ("$collection~simpleProperty", "$property"),' +
-        '\n\tCONSTRAINT "collection/complexObject[@0]_unique" UNIQUE ("$collection~simpleProperty", "$property"),' +
-        '\n\tCONSTRAINT "collection/complexObject[@0]_ref0" FOREIGN KEY ("$collection~simpleProperty")' +
-        '\n\t\tREFERENCES "collection/complexObject" ("$collection~simpleProperty")' +
+        '\n\tCONSTRAINT "collection/complexObject[@0]_primary" PRIMARY KEY ("$collection~id", "$property"),' +
+        '\n\tCONSTRAINT "collection/complexObject[@0]_unique" UNIQUE ("$collection~id", "$property"),' +
+        '\n\tCONSTRAINT "collection/complexObject[@0]_ref0" FOREIGN KEY ("$collection~id")' +
+        '\n\t\tREFERENCES "collection/complexObject" ("$collection~id")' +
         '\n\t\tON DELETE CASCADE' +
         '\n\t\tON UPDATE CASCADE' +
         '\n)')
