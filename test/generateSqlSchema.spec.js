@@ -413,6 +413,66 @@ describe('generateSqlSchema()', () => {
         '\n)')
   })
 
+  it('generates SQL schema with prefix for entities (complex)', () => {
+    const entities = {
+      collection: {
+        fields: {
+          id: {
+            identity: true,
+            type: 'integer'
+          }
+        },
+        relations: {
+          'collection/complexObject': 'one-to-one'
+        },
+        origin: '#'
+      },
+      'collection/complexObject': {
+        fields: {
+          '$collection~id': {
+            identity: true,
+            type: 'integer',
+            reference: {
+              entity: 'collection',
+              field: 'id',
+              depth: 1
+            },
+            relation: {
+              entity: 'collection',
+              field: 'id'
+            }
+          },
+          otherSimpleProperty: {
+            type: 'integer'
+          }
+        },
+        origin: '#/properties/complexObject',
+        foreignFields: [
+          '$collection~id'
+        ]
+      }
+    }
+    generateSqlSchema('pg', entities, 'prefix:')
+      .map(query => query.toString())
+      .join(';\n')
+      .should.be.equal(
+        'CREATE TABLE "prefix:collection" (' +
+        '\n\tid BIGINT NOT NULL,' +
+        '\n\tCONSTRAINT "prefix:collection_primary" PRIMARY KEY (id),' +
+        '\n\tCONSTRAINT "prefix:collection_unique" UNIQUE (id)' +
+        '\n);\n' +
+        'CREATE TABLE "prefix:collection/complexObject" (' +
+        '\n\t"$collection~id" BIGINT NOT NULL,' +
+        '\n\totherSimpleProperty BIGINT NULL,' +
+        '\n\tCONSTRAINT "prefix:collection/complexObject_primary" PRIMARY KEY ("$collection~id"),' +
+        '\n\tCONSTRAINT "prefix:collection/complexObject_unique" UNIQUE ("$collection~id"),' +
+        '\n\tCONSTRAINT "prefix:collection/complexObject_ref0" FOREIGN KEY ("$collection~id")' +
+        '\n\t\tREFERENCES "prefix:collection" (id)' +
+        '\n\t\tON DELETE CASCADE' +
+        '\n\t\tON UPDATE CASCADE' +
+        '\n)')
+  })
+
   it('generates SQL schema for entities (complex with additionalProperties)', () => {
     const entities = {
       collection: {
