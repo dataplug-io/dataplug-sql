@@ -2,6 +2,7 @@
 require('chai')
   .use(require('chai-as-promised'))
   .should()
+const moment = require('moment')
 const logger = require('winston')
 const { SqlSerializer } = require('../lib')
 
@@ -1172,5 +1173,47 @@ describe('SqlSerializer', () => {
         '\n\t\t\'value\'' +
         '\n\t)' +
         '\n\tON CONFLICT DO NOTHING')
+  })
+
+  describe('#serializeValue()', () => {
+    it('serializes integer', () => {
+      new SqlSerializer('pg').serializeValue('integer', 42)
+        .should.be.equal('42')
+    })
+
+    it('serializes boolean', () => {
+      new SqlSerializer('pg').serializeValue('boolean', true)
+        .should.be.equal('TRUE')
+    })
+
+    it('serializes timestamp', () => {
+      new SqlSerializer('pg').serializeValue('timestamp', '1970-01-01T00:00:00Z')
+        .should.be.equal('TIMESTAMP \'1970-01-01T00:00:00Z\'')
+    })
+
+    it('serializes datetime', () => {
+      new SqlSerializer('pg').serializeValue('datetime', moment('1970-01-01T00:00:00Z'))
+        .should.be.equal('TIMESTAMP WITH TIME ZONE \'1970-01-01T00:00:00Z\'')
+    })
+
+    it('serializes datetime with time zone', () => {
+      new SqlSerializer('pg').serializeValue('datetime', moment('1970-01-01T02:00:00+02'))
+        .should.be.equal('TIMESTAMP WITH TIME ZONE \'1970-01-01T02:00:00+02:00\'')
+    })
+
+    it('serializes date', () => {
+      new SqlSerializer('pg').serializeValue('date', '1970-01-01T00:00:00Z')
+        .should.be.equal('DATE \'1970-01-01\'')
+    })
+
+    it('serializes time', () => {
+      new SqlSerializer('pg').serializeValue('time', moment('1970-01-01T00:00:00Z'))
+        .should.be.equal('TIME WITH TIME ZONE \'00:00:00Z\'')
+    })
+
+    it('serializes json', () => {
+      new SqlSerializer('pg').serializeValue('json', { property: 'value\'d' })
+        .should.be.equal('\'{"property":"value\'\'d"}\'::json')
+    })
   })
 })
